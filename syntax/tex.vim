@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Wed 17 Dec 2014 12:45:38 PM IST
+" Last Changed:	Thu 18 Dec 2014 12:05:27 AM IST
 " Version:	0.1
 "
 " Description:
@@ -15,14 +15,6 @@ endif
 
 let s:cpo_save = &cpo
 set cpo&vim
-
-" Debug {{{1
-command! SynIDs :call s:synids()
-function! s:synids()
-    for id in synstack( line('.'), col('.') )
-	echo synIDattr( id, 'name' )
-    endfor
-endfunction
 
 " Spell {{{1
 syn spell toplevel
@@ -82,8 +74,8 @@ syn region texArgsSection contained
 syn keyword texSpecialCommands contained
 	    \ nextgroup=@texArgsSpecial,texStarSpecial skipwhite skipempty
 	    \ usepackage RequirePackage documentclass
-	    \ newcommand renewcommand providecommand newenvironment renewenvironment
-	    \ includegraphics setlength eqref ref cite cites label
+	    \ includegraphics setlength eqref ref cite cites pageref bibliography
+	    \ notcite label
 
 " Color and don't spell arguments for Special commands
 syn match texStarSpecial contained '\*' nextgroup=@texArgsSpecial skipwhite skipempty
@@ -96,6 +88,31 @@ syn region texArgsSpecialReq contained matchgroup=texArgDelims
 	    \ start='{' end='}'
 	    \ contains=@TopNoSpell,texArgSep
 	    \ nextgroup=@texArgsSpecial skipwhite skipempty
+
+" {{{1 Preamble
+" Should be defined after commands
+syn region texPreamble
+	    \ start='\v%(\\documentclass)@=' end='\v(\\begin\{document\})@='
+	    \ contains=@texPreambleStuff
+
+syn cluster texPreambleStuff contains=texComment,texPreambleCommand
+
+syn match texPreambleCommand contained '\\'
+	    \ nextgroup=texPreambleGenCommand,texSpecialCommands
+
+" Should be done before texSpecialCommands
+syn match texPreambleGenCommand contained '\v[a-zA-Z@]+\*?'
+	    \ nextgroup=texArgsNoSpell skipwhite skipempty
+
+" Don't color arguments, but mark delimiters. Don't spell.
+syn region texArgsNoSpell contained transparent
+	    \ matchgroup=texArgDelims start='\[' end='\]'
+	    \ nextgroup=texArgsNoSpell skipwhite skipempty
+	    \ contains=@TopNoSpell,texTokens
+syn region texArgsNoSpell contained transparent
+	    \ matchgroup=texArgDelims start='{' end='}'
+	    \ nextgroup=texArgsNoSpell skipwhite skipempty
+	    \ contains=@TopNoSpell,texTokens
 
 " Math {{{1
 Tsy region texMath start='\$' end='\$' contains=@texAllowedInMath
@@ -166,18 +183,6 @@ syn region texMathEnv transparent contained
 	    \ end='\v\\end\{\z1\}'
 	    \ contains=@texAllowedInMath
 
-"Tsy match texBegin '\\begin' nextgroup=texEnvDelimStart
-"syn match texEnvDelimStart contained '{' nextgroup=texEnvStart
-"syn region texEnvStart matchgroup=texArgsSpecialReq transparent
-"	    \ start='\v\z([a-zA-Z]+\*?)' end='\v\\end\{\zs\z1\ze\}'
-"	    \ nextgroup=texEnvDelimEnd
-"syn match texEnvDelimEnd contained '}'
-"
-"hi def link texBegin texCommand
-"hi def link texEnvDelimStart texArgDelims
-"hi def link texEnvDelimEnd texArgDelims
-
-
 " Misc TeX Constructs. {{{1
 " {{{2 Misc TeX dimensions
 Tsy match texDimen '\v-?%(\.[0-9]+|([0-9]+(\.[0-9]+)?))%(pt|pc|bp|in|cm|mm|dd|cc|sp|ex|em)>'
@@ -206,8 +211,10 @@ hi def link texCommand		    Statement
 hi def link texSectionCommands	    texCommand
 hi def link texSpecialCommands	    texCommand
 hi def link texGenericCommand	    texCommand
-hi def link texPStar		    texSectionCommands
-hi def link texStarSpecial		    texSpecialCommands
+hi def link texStarSpecial	    texSpecialCommands
+
+hi def link texPreambleCommand	    texCommand
+hi def link texPreambleGenCommand   texPreambleCommand
 
 hi def link texArgSep		    Special
 hi def link texDimen		    Number
@@ -216,13 +223,13 @@ hi def link texTokenError	    Error
 hi def link texSpecialChars	    Special
 
 hi def link texArgDelims	    Special
-hi def link texArgsSpecialOpt		    Constant
-hi def link texArgsSpecialReq		    Type
-hi def link texArgsSectionOpt		    texArgsSpecialOpt
-hi def link texArgsPreProcReq		    PreProc
+hi def link texArgsSpecialOpt	    Constant
+hi def link texArgsSpecialReq	    Type
+hi def link texArgsSectionOpt	    texArgsSpecialOpt
+hi def link texArgsPreProcReq	    PreProc
 
-hi def link texStarSection	texSectionCommands
-hi def link texArgsSection	PreProc
+hi def link texStarSection	    texSectionCommands
+hi def link texArgsSection	    PreProc
 
 
 hi def link texMathCommand	    texCommand
@@ -231,11 +238,9 @@ hi def link texMathTOptArg	    texArgsSpecialOpt
 hi def link texMathTRegArg	    Normal
 hi def link texMathTStar	    texMathCommand
 
-hi def link texEnvMath  texMath
-hi def link texArgsEnvReq texArgsSpecialReq
-hi def link texArgsEnvOpt texArgsSpecialOpt
-
-
+hi def link texEnvMath		    texMath
+hi def link texArgsEnvReq	    texArgsSpecialReq
+hi def link texArgsEnvOpt	    texArgsSpecialOpt
 
 hi def link texComment		    Comment
 
