@@ -1,12 +1,26 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Thu 18 Dec 2014 02:23:25 PM IST
+" Last Changed:	Thu 18 Dec 2014 11:40:46 PM IST
 " Version:	0.1
 "
 " Description:
 "   Highlight LaTeX documents without the ridiculous amount of complexity used
 "   by the default tex.vim syntax file.
+"
+" Options:
+"
+"   To treat certain environments as math (e.g. equation, gather, etc.), use
+"
+"	let g:tex_math_envs = 'myenv1 myenv2 ...'
+"
+"   To get syntax folding, just set fdm=syntax. To fold on additional
+"   environments, do
+"
+"	g:tex_fold_envs = 'myenv1 myenv2 ...'
+"
+"   Folds can be ended using %endsection, %endsubsection, etc. Also custom
+"   folds can be created using "%{{{{" and "%}}}}" (note the extra "{").
 
 " Load control {{{1
 if exists("b:current_syntax")
@@ -33,7 +47,7 @@ command! -nargs=+ Tsy :call s:syn_top( <q-args>, <f-args> )
 
 " {{{1 TeX Commands
 " Leading backslash for commands. Do this first, so it can be overridden
-Tsy match texCommand '\v\\[A-Za-z@]@=' nextgroup=@texCommands
+Tsy match texCommand '\v\\%([A-Za-z@]+)@=' nextgroup=@texCommands
 syn cluster texCommands
 	    \ contains=texSectionCommands,texSpecialCommands,texGenericCommand
 
@@ -74,8 +88,10 @@ syn region texArgsSection contained
 syn keyword texSpecialCommands contained
 	    \ nextgroup=@texArgsSpecial,texStarSpecial skipwhite skipempty
 	    \ usepackage RequirePackage documentclass
-	    \ includegraphics setlength eqref ref cite cites pageref bibliography
-	    \ bibliographystyle notcite label
+	    \ input includegraphics setlength
+	    \ eqref cref ref cite cites pageref label
+	    \ bibliography bibliographystyle notcite
+	    \ url email subjclass
 
 " Color and don't spell arguments for Special commands
 syn match texStarSpecial contained '\*' nextgroup=@texArgsSpecial skipwhite skipempty
@@ -97,7 +113,7 @@ Tsy region texPreamble fold
 
 syn cluster texPreambleStuff contains=texComment,texPreambleCommand
 
-syn match texPreambleCommand contained '\\'
+syn match texPreambleCommand contained '\v\\%([A-Za-z@]+)@='
 	    \ nextgroup=texPreambleGenCommand,texSpecialCommands
 
 " Should be done before texSpecialCommands
@@ -124,8 +140,8 @@ syn cluster texAllowedInMath
 	    \ contains=texSpecialChars,texMathCommand,texMathEnv,texComment
 
 " Math commands with math arguments.
-syn match texMathCommand contained '\v\\[A-Za-z@]@=' nextgroup=texMathCommands
-syn match texMathCommands '\v[a-zA-Z]+\*?' contained
+syn match texMathCommand contained '\v\\%([A-Za-z@]+)@=' nextgroup=texMathCommands
+syn match texMathCommands '\v[a-zA-Z@]+\*?' contained
 	    \ nextgroup=texMathMArg skipwhite skipempty
 syn region texMathMArg contained transparent
 	    \ matchgroup=texArgDelims start='\[' end='\]'
@@ -202,7 +218,12 @@ Tsy match texTokenError '#[0-9]'
 syn match texTokens contained '#[0-9]'
 
 " TeX backslashed special characters
-Tsy match texSpecialChars '\v\\%(\\%(\[[0-9]\])?|[$&#\'":`]|[ijv]>)'
+"Tsy match texSpecialChars /\v\c\\%(\\%(\[[0-9]\])?|[a-z@]%([a-z@])@!|[^a-z@])/
+Tsy match texSpecialChars /\v\\%(\\%(\[[0-9]\])?|[$&%#{}_]|\s)/
+
+" Abbreviations, so that we don't get them marked as spelling errors
+" 2014-12-18: Adding transparent makes this ineffective.
+"Tsy match texAbbrevs /\v\C<[0-9A-Z]*[A-Z][0-9A-Z]+>/
 
 " {{{1 TeX Comments
 Tsy match  texComment	'%.*$'
@@ -322,4 +343,3 @@ let   b:current_syntax = "tex"
 let &cpo               = s:cpo_save
 
 unlet s:cpo_save s:math_env_names s:start_re s:fold_envs
-
