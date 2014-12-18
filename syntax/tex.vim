@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Thu 18 Dec 2014 12:54:00 PM IST
+" Last Changed:	Thu 18 Dec 2014 02:17:12 PM IST
 " Version:	0.1
 "
 " Description:
@@ -118,6 +118,7 @@ syn region texArgsNoSpell contained transparent
 Tsy region texMath start='\$' end='\$' contains=@texAllowedInMath
 Tsy region texMath start='\$\$' end='\$\$' contains=@texAllowedInMath
 Tsy region texMath start='\\(' end='\\)' contains=@texAllowedInMath
+Tsy region texMath start='\\\[' end='\\\]' contains=@texAllowedInMath
 
 syn cluster texAllowedInMath
 	    \ contains=texSpecialChars,texMathCommand,texMathEnv,texComment
@@ -168,15 +169,15 @@ Tsy region texArgsEnvOpt
 	    \ nextgroup=@texArgsSpecial skipwhite skipempty
 
 " Math environments
-let math_env_names = []
-command! -nargs=+ MathEnvs let math_env_names += [<f-args>]
-MathEnvs align alignat displaymath eqnarray equation gather IEEEeqnarray
-	    \ multline subequations xalignat xxalignat
-delc MathEnvs
-
-let start_re = '\v\\begin\{\z(%(' . join( math_env_names, '|' ) . ')\*?)\}'
+let s:math_env_names = 'align alignat displaymath eqnarray equation gather'
+	    \ . ' IEEEeqnarray multline subequations xalignat xxalignat'
+	    \ . ( exists( 'g:tex_math_envs' ) ? ' '.g:tex_math_envs : '')
+let s:start_re = '\v\\begin\{\z(%('
+	    \ . substitute( s:math_env_names, '\v\s+', '|', 'g' )
+	    \ . ')\*?)\}'
 exe 'Tsy region texEnvMath matchgroup=texMath'
-	    \ 'start="'.start_re.'" end="\v\\end\{\z1\}" contains=@texAllowedInMath'
+	    \ 'start="'.s:start_re.'" end="\v\\end\{\z1\}"'
+	    \ 'contains=@texAllowedInMath'
 
 syn region texMathEnv transparent contained
 	    \ matchgroup=texArgsSection
@@ -204,11 +205,14 @@ syn match texTokens contained '#[0-9]'
 Tsy match texSpecialChars '\v\\%(\\%(\[[0-9]\])?|[$&#\'":`]|[ijv]>)'
 
 " {{{1 TeX Comments
+Tsy match  texComment	'%.*$'
 Tsy match  texComment	'%\s.*$' contains=@Spell
-Tsy match  texComment	'%\S.*$'
-Tsy region texComment	start='\\iffalse\>'	end='\\else\>'  end='\\fi\>' contains=texComment,texNestedIf matchgroup=texComment
-syn region texNestedIf contained transparent start='\\if\%(false\|true\)\@!\w\{2,}' skip='\\else\>' end='\\fi\>' contains=texNestedIf
-
+Tsy region texComment	 matchgroup=texComment fold
+	    \ start='\\iffalse\>' end='\\else\>' end='\\fi\>'
+	    \ contains=texComment,texNestedIf
+syn region texNestedIf contained transparent
+	    \ start='\v\\if%(f>)@!\w+>' skip='\\else\>' end='\\fi\>'
+	    \ contains=texNestedIf
 
 " {{{1 Folding
 
@@ -237,19 +241,20 @@ Tsy region texBibFold transparent fold keepend
 	    \ end='\v\n%(\s*\\end\{document\})@='
 
 " Fold environments (theorems, etc.)
-let fold_envs = []
-command! -nargs=+ FoldEnvs let fold_envs += [<f-args>]
-FoldEnvs theorem proof lemma proposition corollary remark thebibliography
-delc FoldEnvs
+let s:fold_envs = 'theorem lemma proposition corollary conjecture definition'
+	    \ . ' remark example proof abstract figure thebibliography'
+	    \ . ( exists( 'g:tex_fold_envs' ) ? ' '.g:tex_fold_envs : '' )
 
-let start_re = '\v\\begin\{\z(%(' . join( fold_envs, '|' ) . ')\*?)\}'
+let s:start_re = '\v\\begin\{\z(%('
+	    \ . substitute( s:fold_envs, '\v\s+', '|', 'g' )
+	    \ . ')\*?)\}'
 exe 'Tsy region texEnvFold transparent fold keepend'
-	    \ 'start="'.start_re.'" end="\v\\end\{\z1\}"'
+	    \ 'start="'.s:start_re.'" end="\v\\end\{\z1\}"'
 
 " Comment markers. Only %{{{{ and %}}}} are supported. No number versions
 " Use four braces (instead of 3) to avoid confusion with existing fold
 " markers.
-Tsy region texCommendFold transparent fold keepend extend
+Tsy region texCommentFold transparent fold keepend extend
 	    \ start='\v\%.*\{{4}'
 	    \ end='\v\%.*\}{4}'
 
@@ -316,5 +321,5 @@ hi def link texComment		    Comment
 let   b:current_syntax = "tex"
 let &cpo               = s:cpo_save
 
-unlet s:cpo_save math_env_names start_re
+unlet s:cpo_save s:math_env_names s:start_re s:fold_envs
 
