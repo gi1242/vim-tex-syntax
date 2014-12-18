@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Thu 18 Dec 2014 12:05:27 AM IST
+" Last Changed:	Thu 18 Dec 2014 08:36:28 AM IST
 " Version:	0.1
 "
 " Description:
@@ -137,21 +137,21 @@ syn region texMathMArg contained transparent
 
 syn keyword texMathCommands contained
 	    \ text textit textbf parbox raisebox mbox operatorname
-	    \ nextgroup=@texMathTArgs,texMathTStar skipwhite skipempty
-syn match texMathTStar contained '\*' nextgroup=@texMathTArgs skipwhite skipempty
-syn cluster texMathTArgs contains=texMathTOptArg,texMathTRegArg
-syn region texMathTOptArg contained
+	    \ nextgroup=@texMathTArgs,texStarMathText skipwhite skipempty
+syn match texStarMathText contained '\*' nextgroup=@texMathTArgs skipwhite skipempty
+syn cluster texMathTArgs contains=texArgsMathTextOpt,texArgsMathTextReq
+syn region texArgsMathTextOpt contained
 	    \ matchgroup=texArgDelims start='\[' end='\]'
 	    \ nextgroup=@texMathTArgs skipwhite skipempty
 	    \ contains=@TopNoSpell,texArgSep
-syn region texMathTRegArg contained
+syn region texArgsMathTextReq contained
 	    \ matchgroup=texArgDelims start='{' end='}'
 	    \ nextgroup=@texMathTArgs skipwhite skipempty
 	    \ contains=TOP
 
 " Environments {{{1
 Tsy region texEnv transparent
-	    \ matchgroup=texArgsPreProcReq
+	    \ matchgroup=texArgsSection
 	    \ start='\v\\begin\{\z([a-zA-Z]+\*?)\}'
 	    \ end='\v\\end\{\z1\}'
 	    \ contains=@TopSpell
@@ -178,10 +178,17 @@ exe 'Tsy region texEnvMath matchgroup=texMath'
 	    \ 'start="'.start_re.'" end="\v\\end\{\z1\}" contains=@texAllowedInMath'
 
 syn region texMathEnv transparent contained
-	    \ matchgroup=texArgsPreProcReq
+	    \ matchgroup=texArgsSection
 	    \ start='\v\\begin\{\z([a-zA-Z]+\*?)\}'
 	    \ end='\v\\end\{\z1\}'
 	    \ contains=@texAllowedInMath
+
+" Unmatched end environments
+Tsy match texEnvEndError '\\end\>'
+
+" Document will likely be longer than sync minlines; don't match a missing end
+" as an error.
+Tsy match texEnvEndDoc '\v\\end\{document\}'
 
 " Misc TeX Constructs. {{{1
 " {{{2 Misc TeX dimensions
@@ -202,7 +209,23 @@ syn region texNestedIf contained transparent start='\\if\%(false\|true\)\@!\w\{2
 
 
 " Synchronization {{{1
-syn sync fromstart
+"syn sync maxlines=200
+syn sync minlines=50
+syn sync match texSync		grouphere NONE		'\v\\(sub)*section>'
+
+" Sync items from the official VIM syntax file. Matching one of these might
+" break the end proof environment, since proofs can be quite long.
+"syn sync match texSync		groupthere NONE		'\\end{abstract}'
+"syn sync match texSync		groupthere NONE		'\\end{center}'
+"syn sync match texSync		groupthere NONE		'\\end{description}'
+"syn sync match texSync		groupthere NONE		'\\end{enumerate}'
+"syn sync match texSync		groupthere NONE		'\\end{itemize}'
+"syn sync match texSync		groupthere NONE		'\\end{table}'
+"syn sync match texSync		groupthere NONE		'\\end{tabular}'
+
+" End math zones.
+"let math_end_re = '\v\\end\{%(' . join( s:math_env_names, '|' ) . ')\*?\}'
+"exe 'syn sync match texSync groupthere NONE' "'".math_end_re."'"
 
 " {{{1 Highlighting groups
 hi def link texMath		    Type
@@ -225,22 +248,22 @@ hi def link texSpecialChars	    Special
 hi def link texArgDelims	    Special
 hi def link texArgsSpecialOpt	    Constant
 hi def link texArgsSpecialReq	    Type
-hi def link texArgsSectionOpt	    texArgsSpecialOpt
-hi def link texArgsPreProcReq	    PreProc
 
 hi def link texStarSection	    texSectionCommands
 hi def link texArgsSection	    PreProc
 
-
 hi def link texMathCommand	    texCommand
 hi def link texMathCommands	    texCommand
-hi def link texMathTOptArg	    texArgsSpecialOpt
-hi def link texMathTRegArg	    Normal
-hi def link texMathTStar	    texMathCommand
+hi def link texArgsMathTextOpt	    texArgsSpecialOpt
+hi def link texArgsMathTextReq	    Normal
+hi def link texStarMathText	    texMathCommand
 
 hi def link texEnvMath		    texMath
 hi def link texArgsEnvReq	    texArgsSpecialReq
 hi def link texArgsEnvOpt	    texArgsSpecialOpt
+
+hi def link texEnvEndError	    Error
+hi def link texEnvEndDoc	    texArgsSection
 
 hi def link texComment		    Comment
 
