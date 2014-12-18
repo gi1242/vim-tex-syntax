@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Thu 18 Dec 2014 02:17:12 PM IST
+" Last Changed:	Thu 18 Dec 2014 02:23:25 PM IST
 " Version:	0.1
 "
 " Description:
@@ -33,7 +33,7 @@ command! -nargs=+ Tsy :call s:syn_top( <q-args>, <f-args> )
 
 " {{{1 TeX Commands
 " Leading backslash for commands. Do this first, so it can be overridden
-Tsy match texCommand '\v\\' nextgroup=@texCommands
+Tsy match texCommand '\v\\[A-Za-z@]@=' nextgroup=@texCommands
 syn cluster texCommands
 	    \ contains=texSectionCommands,texSpecialCommands,texGenericCommand
 
@@ -124,7 +124,7 @@ syn cluster texAllowedInMath
 	    \ contains=texSpecialChars,texMathCommand,texMathEnv,texComment
 
 " Math commands with math arguments.
-syn match texMathCommand contained '\\' nextgroup=texMathCommands
+syn match texMathCommand contained '\v\\[A-Za-z@]@=' nextgroup=texMathCommands
 syn match texMathCommands '\v[a-zA-Z]+\*?' contained
 	    \ nextgroup=texMathMArg skipwhite skipempty
 syn region texMathMArg contained transparent
