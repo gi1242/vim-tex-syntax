@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Thu 18 Dec 2014 11:40:46 PM IST
+" Last Changed:	Fri 19 Dec 2014 08:56:55 AM IST
 " Version:	0.1
 "
 " Description:
@@ -276,7 +276,7 @@ exe 'Tsy region texEnvFold transparent fold keepend'
 " Use four braces (instead of 3) to avoid confusion with existing fold
 " markers.
 Tsy region texCommentFold transparent fold keepend extend
-	    \ start='\v\%.*\{{4}'
+	    \ start='\v^.*\%.*\{{4}'
 	    \ end='\v\%.*\}{4}'
 
 " Synchronization {{{1
