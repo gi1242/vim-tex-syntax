@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Fri 19 Dec 2014 08:56:55 AM IST
+" Last Changed:	Mon 22 Dec 2014 02:57:56 PM IST
 " Version:	0.1
 "
 " Description:
@@ -131,6 +131,10 @@ syn region texArgsNoSpell contained transparent
 	    \ contains=@TopNoSpell,texTokens
 
 " Math {{{1
+" Cluster with the same name as the default tex.vim syntax file, so that it
+" should look OK when included.
+syn cluster texMathZoneGroup contains=@texAllowedInMath
+
 Tsy region texMath start='\$' end='\$' contains=@texAllowedInMath
 Tsy region texMath start='\$\$' end='\$\$' contains=@texAllowedInMath
 Tsy region texMath start='\\(' end='\\)' contains=@texAllowedInMath
