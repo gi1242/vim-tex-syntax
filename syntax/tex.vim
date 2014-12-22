@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Mon 22 Dec 2014 08:22:45 PM IST
+" Last Changed:	Mon 22 Dec 2014 10:46:46 PM IST
 " Version:	0.1
 "
 " Description:
@@ -13,6 +13,10 @@
 "   To treat certain environments as math (e.g. equation, gather, etc.), use
 "
 "	let g:tex_math_envs = 'myenv1 myenv2 ...'
+"
+"   To treat certain commands as special (e.g. usepackage) use
+"
+"	let g:tex_special_commands = 'mycmd1 mycmd2 ...'
 "
 "   To get syntax folding, just set fdm=syntax. To fold on additional
 "   environments, do
@@ -53,8 +57,7 @@ syn cluster texCommands
 
 " Braces (do before command arguments)
 Tsy match texBraceError '}'
-Tsy region texBrace transparent start='{' end='}' contains=TOP,texBraceError
-hi def link texBraceError texError
+Tsy region texTextBrace transparent start='{' end='}' contains=TOP,texBraceError
 
 " Generic commands {{{2
 syn match texGenericCommand contained '\v[a-zA-Z@]+\*?'
@@ -64,11 +67,11 @@ syn match texGenericCommand contained '\v[a-zA-Z@]+\*?'
 syn region texArgsGeneric contained transparent
 	    \ matchgroup=texArgDelims start='\[' end='\]'
 	    \ nextgroup=texArgsGeneric skipwhite skipempty
-	    \ contains=@TopSpell,texTokens
+	    \ contains=@TopSpell
 syn region texArgsGeneric contained transparent
 	    \ matchgroup=texArgDelims start='{' end='}'
 	    \ nextgroup=texArgsGeneric skipwhite skipempty
-	    \ contains=@TopSpell,texTokens
+	    \ contains=@TopSpell
 
 
 " Section commands {{{2
@@ -90,13 +93,16 @@ syn region texArgsSection contained
 	    \ contains=@TopSpell
 
 " Special commands {{{2
-syn keyword texSpecialCommands contained
-	    \ nextgroup=@texArgsSpecial,texStarSpecial skipwhite skipempty
-	    \ usepackage RequirePackage documentclass
-	    \ input includegraphics setlength
-	    \ eqref cref ref cite cites pageref label
-	    \ bibliography bibliographystyle notcite
-	    \ url email subjclass
+let s:tex_special_commands = 
+	    \ 'usepackage RequirePackage documentclass'
+	    \ . ' input includegraphics setlength'
+	    \ . ' eqref cref ref cite cites pageref label'
+	    \ . ' bibliography bibliographystyle notcite'
+	    \ . ' url email subjclass'
+	    \ . ( exists( 'g:tex_special_commands' ) ? g:tex_special_commands : '')
+exe 'syn keyword texSpecialCommands contained'
+	    \ 'nextgroup=@texArgsSpecial,texStarSpecial skipwhite skipempty'
+	    \ s:tex_special_commands
 
 " Color and don't spell arguments for Special commands
 syn match texStarSpecial contained '\*' nextgroup=@texArgsSpecial skipwhite skipempty
@@ -129,11 +135,11 @@ syn match texPreambleGenCommand contained '\v[a-zA-Z@]+\*?'
 syn region texArgsNoSpell contained transparent
 	    \ matchgroup=texArgDelims start='\[' end='\]'
 	    \ nextgroup=texArgsNoSpell skipwhite skipempty
-	    \ contains=@TopNoSpell,texTokens
+	    \ contains=@TopNoSpell
 syn region texArgsNoSpell contained transparent
 	    \ matchgroup=texArgDelims start='{' end='}'
 	    \ nextgroup=texArgsNoSpell skipwhite skipempty
-	    \ contains=@TopNoSpell,texTokens
+	    \ contains=@TopNoSpell
 
 " Math {{{1
 " Cluster with the same name as the default tex.vim syntax file, so that it
@@ -146,8 +152,25 @@ Tsy region texMath start='\\(' end='\\)' contains=@texAllowedInMath
 Tsy region texMath start='\\\[' end='\\\]' contains=@texAllowedInMath
 
 syn cluster texAllowedInMath
-	    \ contains=texBrace,texSpecialChars,texMathCommand,texMathEnv,texComment
+	    \ contains=texMathBrace,texSpecialChars,texMathCommand,texMathEnv
+	    \ add=texMathScripts,texComment,texEnvError,texBraceError
 
+" Copy all regions above except texBraceError into this one.
+syn cluster texMathNoBraceError
+	    \ contains=texMathBrace,texSpecialChars,texMathCommand,texMathEnv
+	    \ add=texMathScripts,texComment,texEnvError
+
+syn region texMathBrace contained transparent start='{' end='}'
+	    \ contains=@texMathNoBraceError
+
+" Math sub/super scripts
+syn match texMathScripts contained '[_^]'
+	    \ nextgroup=texMathScriptArg skipwhite skipempty
+syn region texMathScriptArg contained transparent
+	    \ matchgroup=texIdentifier start='{' end='}'
+
+
+"
 " Math commands with math arguments.
 syn match texMathCommand contained '\v\\%([A-Za-z@]+)@=' nextgroup=texMathCommands
 syn match texMathCommands '\v[a-zA-Z@]+\*?' contained
@@ -211,7 +234,7 @@ syn region texMathEnv transparent contained
 	    \ contains=@texAllowedInMath
 
 " Unmatched end environments
-Tsy match texEnvEndError '\\end\>'
+Tsy match texEnvError '\\end\>'
 
 " Document will likely be longer than sync minlines; don't match a missing end
 " as an error.
@@ -223,8 +246,7 @@ Tsy match texDimen '\v-?%(\.[0-9]+|([0-9]+(\.[0-9]+)?))%(pt|pc|bp|in|cm|mm|dd|cc
 "syn keyword texUnits contained pt pc bp in cm mm dd cc sp ex em
 
 " {{{2 TeX macro tokens
-Tsy match texError '#[0-9]'
-syn match texTokens contained '#[0-9]'
+Tsy match texTokens contained '#[0-9]'
 
 " TeX backslashed special characters
 "Tsy match texSpecialChars /\v\c\\%(\\%(\[[0-9]\])?|[a-z@]%([a-z@])@!|[^a-z@])/
@@ -343,16 +365,18 @@ hi def link texMathCommands	    texCommand
 hi def link texArgsMathTextOpt	    texArgsSpecialOpt
 hi def link texArgsMathTextReq	    Normal
 hi def link texStarMathText	    texMathCommand
+hi def link texMathScripts	    texIdentifier
 
 hi def link texEnvMath		    texMath
 hi def link texArgsEnvReq	    texArgsSpecialReq
 hi def link texArgsEnvOpt	    texArgsSpecialOpt
 
-hi def link texEnvEndError	    texError
+hi def link texBraceError	    texError
+hi def link texEnvError		    texError
 hi def link texEnvEndDoc	    texArgsSection
 
 " {{{1 Cleanup
 let   b:current_syntax = "tex"
 let &cpo               = s:cpo_save
 
-unlet s:cpo_save s:math_env_names s:start_re s:fold_envs
+unlet s:cpo_save s:math_env_names s:start_re s:fold_envs s:tex_special_commands
