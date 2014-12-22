@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Mon 22 Dec 2014 02:57:56 PM IST
+" Last Changed:	Mon 22 Dec 2014 08:22:45 PM IST
 " Version:	0.1
 "
 " Description:
@@ -51,6 +51,11 @@ Tsy match texCommand '\v\\%([A-Za-z@]+)@=' nextgroup=@texCommands
 syn cluster texCommands
 	    \ contains=texSectionCommands,texSpecialCommands,texGenericCommand
 
+" Braces (do before command arguments)
+Tsy match texBraceError '}'
+Tsy region texBrace transparent start='{' end='}' contains=TOP,texBraceError
+hi def link texBraceError texError
+
 " Generic commands {{{2
 syn match texGenericCommand contained '\v[a-zA-Z@]+\*?'
 	    \ nextgroup=texArgsGeneric skipwhite skipempty
@@ -96,12 +101,12 @@ syn keyword texSpecialCommands contained
 " Color and don't spell arguments for Special commands
 syn match texStarSpecial contained '\*' nextgroup=@texArgsSpecial skipwhite skipempty
 syn cluster texArgsSpecial contains=texArgsSpecialOpt,texArgsSpecialReq
-syn region texArgsSpecialOpt contained matchgroup=texArgDelims
-	    \ start='\[' end='\]'
+syn region texArgsSpecialOpt contained
+	    \ matchgroup=texArgDelims start='\[' end='\]'
 	    \ nextgroup=@texArgsSpecial skipwhite skipempty
 	    \ contains=@TopNoSpell,texArgSep
-syn region texArgsSpecialReq contained matchgroup=texArgDelims
-	    \ start='{' end='}'
+syn region texArgsSpecialReq contained
+	    \ matchgroup=texArgDelims start='{' end='}'
 	    \ contains=@TopNoSpell,texArgSep
 	    \ nextgroup=@texArgsSpecial skipwhite skipempty
 
@@ -141,7 +146,7 @@ Tsy region texMath start='\\(' end='\\)' contains=@texAllowedInMath
 Tsy region texMath start='\\\[' end='\\\]' contains=@texAllowedInMath
 
 syn cluster texAllowedInMath
-	    \ contains=texSpecialChars,texMathCommand,texMathEnv,texComment
+	    \ contains=texBrace,texSpecialChars,texMathCommand,texMathEnv,texComment
 
 " Math commands with math arguments.
 syn match texMathCommand contained '\v\\%([A-Za-z@]+)@=' nextgroup=texMathCommands
@@ -172,7 +177,7 @@ syn region texArgsMathTextReq contained
 
 " Environments {{{1
 Tsy region texEnv transparent
-	    \ matchgroup=texArgsSection
+	    \ matchgroup=texIdentifier
 	    \ start='\v\\begin\{\z([a-zA-Z]+\*?)\}'
 	    \ end='\v\\end\{\z1\}'
 	    \ contains=@TopSpell
@@ -200,7 +205,7 @@ exe 'Tsy region texEnvMath matchgroup=texMath'
 	    \ 'contains=@texAllowedInMath'
 
 syn region texMathEnv transparent contained
-	    \ matchgroup=texArgsSection
+	    \ matchgroup=texIdentifier
 	    \ start='\v\\begin\{\z([a-zA-Z]+\*?)\}'
 	    \ end='\v\\end\{\z1\}'
 	    \ contains=@texAllowedInMath
@@ -218,7 +223,7 @@ Tsy match texDimen '\v-?%(\.[0-9]+|([0-9]+(\.[0-9]+)?))%(pt|pc|bp|in|cm|mm|dd|cc
 "syn keyword texUnits contained pt pc bp in cm mm dd cc sp ex em
 
 " {{{2 TeX macro tokens
-Tsy match texTokenError '#[0-9]'
+Tsy match texError '#[0-9]'
 syn match texTokens contained '#[0-9]'
 
 " TeX backslashed special characters
@@ -305,6 +310,13 @@ syn sync match texSync		grouphere NONE		'\v\\(sub)*section>'
 " {{{1 Highlighting groups
 hi def link texMath		    Type
 hi def link texCommand		    Statement
+hi def link texError		    Error
+hi def link texConst		    Constant
+hi def link texSpecial		    Special
+hi def link texIdentifier	    Identifier
+hi def link texPreProc		    PreProc
+hi def link texUnderline	    Underline
+hi def link texComment		    Comment
 
 hi def link texSectionCommands	    texCommand
 hi def link texSpecialCommands	    texCommand
@@ -314,18 +326,17 @@ hi def link texStarSpecial	    texSpecialCommands
 hi def link texPreambleCommand	    texCommand
 hi def link texPreambleGenCommand   texPreambleCommand
 
-hi def link texArgSep		    Special
-hi def link texDimen		    Number
-hi def link texTokens		    Type
-hi def link texTokenError	    Error
-hi def link texSpecialChars	    Special
+hi def link texSpecialChars	    texSpecial
+hi def link texArgSep		    texSpecial
+hi def link texDimen		    texConst
+hi def link texTokens		    texIdentifier
 
-hi def link texArgDelims	    Special
-hi def link texArgsSpecialOpt	    Constant
-hi def link texArgsSpecialReq	    Type
+hi def link texArgDelims	    texCommand
+hi def link texArgsSpecialOpt	    texConst
+hi def link texArgsSpecialReq	    texMath
 
 hi def link texStarSection	    texSectionCommands
-hi def link texArgsSection	    PreProc
+hi def link texArgsSection	    texPreProc
 
 hi def link texMathCommand	    texCommand
 hi def link texMathCommands	    texCommand
@@ -337,10 +348,8 @@ hi def link texEnvMath		    texMath
 hi def link texArgsEnvReq	    texArgsSpecialReq
 hi def link texArgsEnvOpt	    texArgsSpecialOpt
 
-hi def link texEnvEndError	    Error
+hi def link texEnvEndError	    texError
 hi def link texEnvEndDoc	    texArgsSection
-
-hi def link texComment		    Comment
 
 " {{{1 Cleanup
 let   b:current_syntax = "tex"
