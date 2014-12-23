@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Mon 22 Dec 2014 10:46:46 PM IST
+" Last Changed:	Tue 23 Dec 2014 02:25:29 PM IST
 " Version:	0.1
 "
 " Description:
@@ -34,6 +34,13 @@ endif
 let s:cpo_save = &cpo
 set cpo&vim
 
+" Keyword / sty settings. {{{1
+" (La)TeX keywords: uses the characters 0-9,a-z,A-Z,192-255 only...
+" but _ is the only one that causes problems.
+" One may override this iskeyword setting by providing
+" g:tex_isk
+let &l:isk = exists( 'g:tex_isk' ) ? g:tex_isk : '@-@,48-57,a-z,A-Z,192-255'
+
 " Spell {{{1
 syn spell toplevel
 
@@ -51,7 +58,7 @@ command! -nargs=+ Tsy :call s:syn_top( <q-args>, <f-args> )
 
 " {{{1 TeX Commands
 " Leading backslash for commands. Do this first, so it can be overridden
-Tsy match texCommand '\v\\%([A-Za-z@]+)@=' nextgroup=@texCommands
+Tsy match texCommand '\v\\%([[:alpha:]@]+)@=' nextgroup=@texCommands
 syn cluster texCommands
 	    \ contains=texSectionCommands,texSpecialCommands,texGenericCommand
 
@@ -60,7 +67,7 @@ Tsy match texBraceError '}'
 Tsy region texTextBrace transparent start='{' end='}' contains=TOP,texBraceError
 
 " Generic commands {{{2
-syn match texGenericCommand contained '\v[a-zA-Z@]+\*?'
+syn match texGenericCommand contained '\v[[:alpha:]@]+\*?'
 	    \ nextgroup=texArgsGeneric skipwhite skipempty
 
 " Highlight spelling in arguments. Don't color arguments, but mark delimiters.
@@ -124,11 +131,11 @@ Tsy region texPreamble fold
 
 syn cluster texPreambleStuff contains=texComment,texPreambleCommand
 
-syn match texPreambleCommand contained '\v\\%([A-Za-z@]+)@='
+syn match texPreambleCommand contained '\v\\%([[:alpha:]@]+)@='
 	    \ nextgroup=texPreambleGenCommand,texSpecialCommands
 
 " Should be done before texSpecialCommands
-syn match texPreambleGenCommand contained '\v[a-zA-Z@]+\*?'
+syn match texPreambleGenCommand contained '\v[[:alpha:]@]+\*?'
 	    \ nextgroup=texArgsNoSpell skipwhite skipempty
 
 " Don't color arguments, but mark delimiters. Don't spell.
@@ -151,14 +158,10 @@ Tsy region texMath start='\$\$' end='\$\$' contains=@texAllowedInMath
 Tsy region texMath start='\\(' end='\\)' contains=@texAllowedInMath
 Tsy region texMath start='\\\[' end='\\\]' contains=@texAllowedInMath
 
-syn cluster texAllowedInMath
-	    \ contains=texMathBrace,texSpecialChars,texMathCommand,texMathEnv
-	    \ add=texMathScripts,texComment,texEnvError,texBraceError
-
-" Copy all regions above except texBraceError into this one.
-syn cluster texMathNoBraceError
-	    \ contains=texMathBrace,texSpecialChars,texMathCommand,texMathEnv
-	    \ add=texMathScripts,texComment,texEnvError
+let s:allowed_in_math = 'texMathBrace,texSpecialChars,texMathCommand,texMathEnv,'
+	    \ . 'texMathScripts,texComment,texEnvError,texBraceError'
+exe 'syn cluster texAllowedInMath contains=' . s:allowed_in_math
+exe 'syn cluster texMathNoBraceError add='.s:allowed_in_math 'remove=texBraceError'
 
 syn region texMathBrace contained transparent start='{' end='}'
 	    \ contains=@texMathNoBraceError
@@ -168,12 +171,13 @@ syn match texMathScripts contained '[_^]'
 	    \ nextgroup=texMathScriptArg skipwhite skipempty
 syn region texMathScriptArg contained transparent
 	    \ matchgroup=texIdentifier start='{' end='}'
+	    \ contains=@texAllowedInMath
 
 
 "
 " Math commands with math arguments.
-syn match texMathCommand contained '\v\\%([A-Za-z@]+)@=' nextgroup=texMathCommands
-syn match texMathCommands '\v[a-zA-Z@]+\*?' contained
+syn match texMathCommand contained '\v\\%([[:alpha:]@]+)@=' nextgroup=texMathCommands
+syn match texMathCommands '\v[[:alpha:]@]+\*?' contained
 	    \ nextgroup=texMathMArg skipwhite skipempty
 syn region texMathMArg contained transparent
 	    \ matchgroup=texArgDelims start='\[' end='\]'
@@ -201,18 +205,18 @@ syn region texArgsMathTextReq contained
 " Environments {{{1
 Tsy region texEnv transparent
 	    \ matchgroup=texIdentifier
-	    \ start='\v\\begin\{\z([a-zA-Z]+\*?)\}'
+	    \ start='\v\\begin\{\z(\a+\*?)\}'
 	    \ end='\v\\end\{\z1\}'
 	    \ contains=@TopSpell
 
 Tsy region texArgsEnvReq
 	    \ matchgroup=texArgDelims
-	    \ start='\v%(\\begin\{[a-zA-Z]+\*?\}\s*)@<=\{' end='}'
+	    \ start='\v%(\\begin\{\a+\*?\}\s*)@<=\{' end='}'
 	    \ contains=@TopNoSpell,texArgSep
 	    \ nextgroup=@texArgsSpecial skipwhite skipempty
 Tsy region texArgsEnvOpt
 	    \ matchgroup=texArgDelims
-	    \ start='\v%(\\begin\{[a-zA-Z]+\*?\})@<=\[' end=']'
+	    \ start='\v%(\\begin\{\a+\*?\})@<=\[' end=']'
 	    \ contains=@TopNoSpell,texArgSep
 	    \ nextgroup=@texArgsSpecial skipwhite skipempty
 
@@ -229,7 +233,7 @@ exe 'Tsy region texEnvMath matchgroup=texMath'
 
 syn region texMathEnv transparent contained
 	    \ matchgroup=texIdentifier
-	    \ start='\v\\begin\{\z([a-zA-Z]+\*?)\}'
+	    \ start='\v\\begin\{\z(\a+\*?)\}'
 	    \ end='\v\\end\{\z1\}'
 	    \ contains=@texAllowedInMath
 
@@ -249,7 +253,7 @@ Tsy match texDimen '\v-?%(\.[0-9]+|([0-9]+(\.[0-9]+)?))%(pt|pc|bp|in|cm|mm|dd|cc
 Tsy match texTokens contained '#[0-9]'
 
 " TeX backslashed special characters
-"Tsy match texSpecialChars /\v\c\\%(\\%(\[[0-9]\])?|[a-z@]%([a-z@])@!|[^a-z@])/
+"Tsy match texSpecialChars /\v\c\\%(\\%(\[[0-9]\])?|[[:alpha:]@]%([[:alpha:]@])@!|[^[:alpha:]@])/
 Tsy match texSpecialChars /\v\\%(\\%(\[[0-9]\])?|[$&%#{}_]|\s)/
 
 " Abbreviations, so that we don't get them marked as spelling errors
@@ -300,7 +304,7 @@ let s:fold_envs = 'theorem lemma proposition corollary conjecture definition'
 let s:start_re = '\v\\begin\{\z(%('
 	    \ . substitute( s:fold_envs, '\v\s+', '|', 'g' )
 	    \ . ')\*?)\}'
-exe 'Tsy region texEnvFold transparent fold keepend'
+exe 'Tsy region texEnvFold transparent fold keepend extend'
 	    \ 'start="'.s:start_re.'" end="\v\\end\{\z1\}"'
 
 " Comment markers. Only %{{{{ and %}}}} are supported. No number versions
@@ -380,3 +384,4 @@ let   b:current_syntax = "tex"
 let &cpo               = s:cpo_save
 
 unlet s:cpo_save s:math_env_names s:start_re s:fold_envs s:tex_special_commands
+	    \ s:allowed_in_math
