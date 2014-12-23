@@ -1,7 +1,9 @@
 # vim-tex-syntax
 
-This is a rewrite of the default `syntax/tex.vim` used for [TeX]/[LaTeX].
-The reason I rewrote (and not patched) the default file was:
+This is a rewrite of the default `syntax/tex.vim` used for [TeX]/[LaTeX],
+because I got fed-up with the default `syntax/tex.vim` file.
+
+## Features (and differences from the default `syntax/tex.vim`) 
 
 1. *Syntax folding works differently.*
    The document is folded like this
@@ -37,16 +39,20 @@ The reason I rewrote (and not patched) the default file was:
 
 ## Configuration options.
 
+`g:tex_special_commands`
+: Set this to a space separated list of special commands. (I.e. commands whose
+  arguments should be colored, and not spell checked.)
+
 `g:tex_math_envs`
 : Set this to a space separated list of extra environment names that start a
   math zone (e.g. equation, gather, etc.),
 
-`g:tex_math_envs`
-: Set this to a space separated list of extra special commands.
-
 `g:tex_fold_envs`
 : Set this to a space separated list of environment names that should start a
   fold. For one time folds, you can also use the markers `%{{{{` and `%}}}}`.
+
+`g:tex_isk`
+: `iskeyword` option for [TeX]/[LaTeX] files.
 
 ## Links.
 

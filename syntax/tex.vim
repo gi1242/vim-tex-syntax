@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Tue 23 Dec 2014 02:25:29 PM IST
+" Last Changed:	Tue 23 Dec 2014 08:18:24 PM IST
 " Version:	0.1
 "
 " Description:
@@ -107,6 +107,7 @@ let s:tex_special_commands =
 	    \ . ' bibliography bibliographystyle notcite'
 	    \ . ' url email subjclass'
 	    \ . ( exists( 'g:tex_special_commands' ) ? g:tex_special_commands : '')
+
 exe 'syn keyword texSpecialCommands contained'
 	    \ 'nextgroup=@texArgsSpecial,texStarSpecial skipwhite skipempty'
 	    \ s:tex_special_commands
