@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Tue 23 Dec 2014 08:18:24 PM IST
+" Last Changed:	Wed 24 Dec 2014 10:21:34 AM IST
 " Version:	0.1
 "
 " Description:
@@ -58,49 +58,15 @@ command! -nargs=+ Tsy :call s:syn_top( <q-args>, <f-args> )
 
 " {{{1 TeX Commands
 " Leading backslash for commands. Do this first, so it can be overridden
-Tsy match texCommand '\v\\%([[:alpha:]@]+)@=' nextgroup=@texCommands
-syn cluster texCommands
-	    \ contains=texSectionCommands,texSpecialCommands,texGenericCommand
+Tsy match texCommand '\v\\%([[:alpha:]@]+)@='
+	    \ nextgroup=texSpecialCommands,texGenericCommand
 
-" Braces (do before command arguments)
-Tsy match texBraceError '}'
-Tsy region texTextBrace transparent start='{' end='}' contains=TOP,texBraceError
-
-" Generic commands {{{2
+" Generic commands
 syn match texGenericCommand contained '\v[[:alpha:]@]+\*?'
-	    \ nextgroup=texArgsGeneric skipwhite skipempty
+	    \ nextgroup=texArgsNormNorm skipwhite skipempty
 
-" Highlight spelling in arguments. Don't color arguments, but mark delimiters.
-syn region texArgsGeneric contained transparent
-	    \ matchgroup=texArgDelims start='\[' end='\]'
-	    \ nextgroup=texArgsGeneric skipwhite skipempty
-	    \ contains=@TopSpell
-syn region texArgsGeneric contained transparent
-	    \ matchgroup=texArgDelims start='{' end='}'
-	    \ nextgroup=texArgsGeneric skipwhite skipempty
-	    \ contains=@TopSpell
-
-
-" Section commands {{{2
-syn keyword texSectionCommands contained
-	    \ nextgroup=texStarSection,texArgsSection
-	    \ skipwhite skipempty
-	    \ part chapter section subsection subsubsection paragraph subparagraph
-
-" Section command arguments. (Spell checked, highlighted as PreProc)
-syn match texStarSection contained '\*'
-	    \ nextgroup=texArgsSection skipwhite skipempty
-syn region texArgsSection contained
-	    \ matchgroup=texArgDelims start='\[' end='\]'
-	    \ nextgroup=texArgsSection skipwhite skipempty
-	    \ contains=@TopSpell
-syn region texArgsSection contained
-	    \ matchgroup=texArgDelims start='{' end='}'
-	    \ nextgroup=texArgsSection skipwhite skipempty
-	    \ contains=@TopSpell
-
-" Special commands {{{2
-let s:tex_special_commands = 
+" Special commands
+let s:cmdlist = 
 	    \ 'usepackage RequirePackage documentclass'
 	    \ . ' input includegraphics setlength'
 	    \ . ' eqref cref ref cite cites pageref label'
@@ -109,20 +75,57 @@ let s:tex_special_commands =
 	    \ . ( exists( 'g:tex_special_commands' ) ? g:tex_special_commands : '')
 
 exe 'syn keyword texSpecialCommands contained'
-	    \ 'nextgroup=@texArgsSpecial,texStarSpecial skipwhite skipempty'
-	    \ s:tex_special_commands
+	    \ 'nextgroup=@texArgsSpclSpcl,texStarSpecial skipwhite skipempty'
+	    \ s:cmdlist
+syn match texStarSpecial contained '\*' nextgroup=@texArgsSpclSpcl skipwhite skipempty
 
-" Color and don't spell arguments for Special commands
-syn match texStarSpecial contained '\*' nextgroup=@texArgsSpecial skipwhite skipempty
-syn cluster texArgsSpecial contains=texArgsSpecialOpt,texArgsSpecialReq
-syn region texArgsSpecialOpt contained
+" Section commands
+let s:cmdlist = 'part chapter section subsection subsubsection paragraph subparagraph'
+	    \ . ( exists( 'g:tex_section_commands' ) ? g:tex_section_commands : '')
+let s:start_re = substitute( s:cmdlist, '\v\s+', '|', 'g' )
+exe 'Tsy match texSectionCommands'
+	    \ 'nextgroup=texArgsNormNorm skipwhite skipempty'
+	    \ '"\v\\%('.s:start_re.')\*?"'
+
+
+" {{{1 Command arguments
+
+" Braces (do before command arguments)
+Tsy match texBraceError '}'
+Tsy region texTextBrace transparent start='{' end='}' contains=TOP,texBraceError
+
+" Optional and required arguments are normal text.
+syn region texArgsNormNorm contained transparent
 	    \ matchgroup=texArgDelims start='\[' end='\]'
-	    \ nextgroup=@texArgsSpecial skipwhite skipempty
+	    \ nextgroup=texArgsNormNorm skipwhite skipempty
+	    \ contains=@TopSpell
+syn region texArgsNormNorm contained transparent
+	    \ matchgroup=texArgDelims start='{' end='}'
+	    \ nextgroup=texArgsNormNorm skipwhite skipempty
+	    \ contains=@TopSpell
+
+" Optional argument is special, normal argument is regular text.
+syn cluster texArgsSpclNorm contains=texArgsSpclNormOpt,texArgsSpclNormReq
+syn region texArgsSpclNormOpt contained
+	    \ matchgroup=texArgDelims start='\[' end='\]'
+	    \ nextgroup=@texArgsSpclNorm skipwhite skipempty
 	    \ contains=@TopNoSpell,texArgSep
-syn region texArgsSpecialReq contained
+syn region texArgsSpclNormReq contained transparent
+	    \ matchgroup=texArgDelims start='{' end='}'
+	    \ nextgroup=@texArgsSpclNorm skipwhite skipempty
+	    \ contains=@TopSpell
+syn match texArgSep contained '[,=]'
+
+" Optional and required arguments are special (colored, no spell).
+syn cluster texArgsSpclSpcl contains=texArgsSpclSpclOpt,texArgsSpclSpclReq
+syn region texArgsSpclSpclOpt contained
+	    \ matchgroup=texArgDelims start='\[' end='\]'
+	    \ nextgroup=@texArgsSpclSpcl skipwhite skipempty
+	    \ contains=@TopNoSpell,texArgSep
+syn region texArgsSpclSpclReq contained
 	    \ matchgroup=texArgDelims start='{' end='}'
 	    \ contains=@TopNoSpell,texArgSep
-	    \ nextgroup=@texArgsSpecial skipwhite skipempty
+	    \ nextgroup=@texArgsSpclSpcl skipwhite skipempty
 
 " {{{1 Preamble
 " Should be defined after commands
@@ -159,10 +162,10 @@ Tsy region texMath start='\$\$' end='\$\$' contains=@texAllowedInMath
 Tsy region texMath start='\\(' end='\\)' contains=@texAllowedInMath
 Tsy region texMath start='\\\[' end='\\\]' contains=@texAllowedInMath
 
-let s:allowed_in_math = 'texMathBrace,texSpecialChars,texMathCommand,texMathEnv,'
+let s:cmdlist = 'texMathBrace,texSpecialChars,texMathCommand,texMathEnv,'
 	    \ . 'texMathScripts,texComment,texEnvError,texBraceError'
-exe 'syn cluster texAllowedInMath contains=' . s:allowed_in_math
-exe 'syn cluster texMathNoBraceError add='.s:allowed_in_math 'remove=texBraceError'
+exe 'syn cluster texAllowedInMath contains=' . s:cmdlist
+exe 'syn cluster texMathNoBraceError add='.s:cmdlist 'remove=texBraceError'
 
 syn region texMathBrace contained transparent start='{' end='}'
 	    \ contains=@texMathNoBraceError
@@ -204,8 +207,9 @@ syn region texArgsMathTextReq contained
 	    \ contains=TOP
 
 " Environments {{{1
+" Generic environments. Arguments are treated as texArgsSpclSpcl
 Tsy region texEnv transparent
-	    \ matchgroup=texIdentifier
+	    \ matchgroup=texEnvNormal
 	    \ start='\v\\begin\{\z(\a+\*?)\}'
 	    \ end='\v\\end\{\z1\}'
 	    \ contains=@TopSpell
@@ -214,12 +218,28 @@ Tsy region texArgsEnvReq
 	    \ matchgroup=texArgDelims
 	    \ start='\v%(\\begin\{\a+\*?\}\s*)@<=\{' end='}'
 	    \ contains=@TopNoSpell,texArgSep
-	    \ nextgroup=@texArgsSpecial skipwhite skipempty
+	    \ nextgroup=@texArgsSpclSpcl skipwhite skipempty
 Tsy region texArgsEnvOpt
 	    \ matchgroup=texArgDelims
 	    \ start='\v%(\\begin\{\a+\*?\})@<=\[' end=']'
 	    \ contains=@TopNoSpell,texArgSep
-	    \ nextgroup=@texArgsSpecial skipwhite skipempty
+	    \ nextgroup=@texArgsSpclSpcl skipwhite skipempty
+
+" Theorem/proof type environments. Arguments are treated as texArgsNormNorm
+let s:cmdlist = 'theorem lemma proposition corollary conjecture definition'
+	    \ . ' remark example proof'
+	    \ . ( exists( 'g:tex_thm_envs' ) ? ' '.g:tex_thm_envs : '')
+let s:start_re = '\v(\\begin\{%('
+	    \ . substitute( s:cmdlist, '\v\s+', '|', 'g' )
+	    \ . ')\*?\}\s*)@<='
+exe 'Tsy region texArgsEnvNormReq transparent matchgroup=texArgDelims'
+	    \ 'start="'.s:start_re.'\{"' 'end="}"'
+	    \ 'contains=@TopSpell'
+	    \ 'nextgroup=@texArgsNormNorm skipwhite skipempty'
+exe 'Tsy region texArgsEnvNormOpt transparent matchgroup=texArgDelims'
+	    \ 'start="'.s:start_re.'\["' 'end="]"'
+	    \ 'contains=@TopSpell'
+	    \ 'nextgroup=@texArgsNormNorm skipwhite skipempty'
 
 " Math environments
 let s:math_env_names = 'align alignat displaymath eqnarray equation gather'
@@ -345,7 +365,7 @@ hi def link texPreProc		    PreProc
 hi def link texUnderline	    Underline
 hi def link texComment		    Comment
 
-hi def link texSectionCommands	    texCommand
+hi def link texSectionCommands	    texPreProc
 hi def link texSpecialCommands	    texCommand
 hi def link texGenericCommand	    texCommand
 hi def link texStarSpecial	    texSpecialCommands
@@ -359,30 +379,28 @@ hi def link texDimen		    texConst
 hi def link texTokens		    texIdentifier
 
 hi def link texArgDelims	    texCommand
-hi def link texArgsSpecialOpt	    texConst
-hi def link texArgsSpecialReq	    texMath
-
-hi def link texStarSection	    texSectionCommands
-hi def link texArgsSection	    texPreProc
+hi def link texArgsSpclSpclOpt	    texConst
+hi def link texArgsSpclSpclReq	    texSpecial
+hi def link texArgsSpclNormOpt	    texArgsSpclSpclOpt
 
 hi def link texMathCommand	    texCommand
 hi def link texMathCommands	    texCommand
-hi def link texArgsMathTextOpt	    texArgsSpecialOpt
+hi def link texArgsMathTextOpt	    texArgsSpclSpclOpt
 hi def link texArgsMathTextReq	    Normal
 hi def link texStarMathText	    texMathCommand
 hi def link texMathScripts	    texIdentifier
 
+hi def link texEnvNormal	    texIdentifier
 hi def link texEnvMath		    texMath
-hi def link texArgsEnvReq	    texArgsSpecialReq
-hi def link texArgsEnvOpt	    texArgsSpecialOpt
+hi def link texArgsEnvReq	    texArgsSpclSpclReq
+hi def link texArgsEnvOpt	    texArgsSpclSpclOpt
 
 hi def link texBraceError	    texError
 hi def link texEnvError		    texError
-hi def link texEnvEndDoc	    texArgsSection
+hi def link texEnvEndDoc	    texEnv
 
 " {{{1 Cleanup
 let   b:current_syntax = "tex"
 let &cpo               = s:cpo_save
 
-unlet s:cpo_save s:math_env_names s:start_re s:fold_envs s:tex_special_commands
-	    \ s:allowed_in_math
+unlet s:cpo_save s:math_env_names s:start_re s:fold_envs s:cmdlist
