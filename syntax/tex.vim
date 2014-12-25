@@ -1,30 +1,12 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Thu 25 Dec 2014 10:59:51 AM IST
+" Last Changed:	Thu 25 Dec 2014 11:10:18 AM IST
 " Version:	0.1
 "
 " Description:
 "   Highlight LaTeX documents without the ridiculous amount of complexity used
-"   by the default tex.vim syntax file.
-"
-" Options:
-"
-"   To treat certain environments as math (e.g. equation, gather, etc.), use
-"
-"	let g:tex_math_envs = 'myenv1 myenv2 ...'
-"
-"   To treat certain commands as special (e.g. usepackage) use
-"
-"	let g:tex_special_commands = 'mycmd1 mycmd2 ...'
-"
-"   To get syntax folding, just set fdm=syntax. To fold on additional
-"   environments, do
-"
-"	g:tex_fold_envs = 'myenv1 myenv2 ...'
-"
-"   Folds can be ended using %endsection, %endsubsection, etc. Also custom
-"   folds can be created using "%{{{{" and "%}}}}" (note the extra "{").
+"   by the default tex.vim syntax file. See README.md for options.
 
 " Load control {{{1
 if exists("b:current_syntax")
