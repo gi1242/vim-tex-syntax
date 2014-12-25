@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Thu 25 Dec 2014 07:17:17 AM IST
+" Last Changed:	Thu 25 Dec 2014 08:36:14 AM IST
 " Version:	0.1
 "
 " Description:
@@ -140,17 +140,20 @@ syn match texPreambleCommand contained '\v\\%([[:alpha:]@]+)@='
 
 " Should be done before texSpecialCommands
 syn match texPreambleGenCommand contained '\v[[:alpha:]@]+\*?'
-	    \ nextgroup=texArgsNoSpell skipwhite skipempty
+	    \ nextgroup=texArgsPreamble skipwhite skipempty
 
 " Don't color arguments, but mark delimiters. Don't spell.
-syn region texArgsNoSpell contained transparent
+syn region texArgsPreamble contained transparent
 	    \ matchgroup=texArgDelims start='\[' end='\]'
-	    \ nextgroup=texArgsNoSpell skipwhite skipempty
-	    \ contains=@TopNoSpell
-syn region texArgsNoSpell contained transparent
+	    \ nextgroup=texArgsPreamble skipwhite skipempty
+	    \ contains=@texArgsPreambleAllowed
+syn region texArgsPreamble contained transparent
 	    \ matchgroup=texArgDelims start='{' end='}'
-	    \ nextgroup=texArgsNoSpell skipwhite skipempty
-	    \ contains=@TopNoSpell
+	    \ nextgroup=texArgsPreamble skipwhite skipempty
+	    \ contains=@texArgsPreambleAllowed
+syn cluster texArgsPreambleAllowed
+	    \ add=texCommand,texBraceError,texTextBrace,texComment
+	    \ add=texMath,texSpecialChars,texDimen,texEnvMath,texTokens
 
 " Math {{{1
 " Cluster with the same name as the default tex.vim syntax file, so that it
@@ -404,7 +407,7 @@ hi def link texArgsEnvOpt	    texArgsSpclSpclOpt
 
 hi def link texBraceError	    texError
 hi def link texEnvError		    texError
-hi def link texEnvEndDoc	    texEnv
+hi def link texEnvEndDoc	    texCommand
 
 " {{{1 Cleanup
 let   b:current_syntax = "tex"
