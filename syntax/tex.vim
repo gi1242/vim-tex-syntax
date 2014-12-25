@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Thu 25 Dec 2014 08:36:14 AM IST
+" Last Changed:	Thu 25 Dec 2014 10:59:51 AM IST
 " Version:	0.1
 "
 " Description:
@@ -152,8 +152,8 @@ syn region texArgsPreamble contained transparent
 	    \ nextgroup=texArgsPreamble skipwhite skipempty
 	    \ contains=@texArgsPreambleAllowed
 syn cluster texArgsPreambleAllowed
-	    \ add=texCommand,texBraceError,texTextBrace,texComment
-	    \ add=texMath,texSpecialChars,texDimen,texEnvMath,texTokens
+	    \ add=texPreambleCommand,texBraceError,texTextBrace,texComment
+	    \ add=texMath,texSpecialChars,texDimen,texEnvDispMath,texTokens
 
 " Math {{{1
 " Cluster with the same name as the default tex.vim syntax file, so that it
@@ -177,7 +177,7 @@ syn region texMathBrace contained transparent start='{' end='}'
 syn match texMathScripts contained '[_^]'
 	    \ nextgroup=texMathScriptArg skipwhite skipempty
 syn region texMathScriptArg contained transparent
-	    \ matchgroup=texIdentifier start='{' end='}'
+	    \ matchgroup=texMathScripts start='{' end='}'
 	    \ contains=@texAllowedInMath
 
 
@@ -257,12 +257,12 @@ let s:math_env_names = 'align alignat displaymath eqnarray equation gather'
 let s:start_re = '\v\\begin\{\z(%('
 	    \ . substitute( s:math_env_names, '\v\s+', '|', 'g' )
 	    \ . ')\*?)\}'
-exe 'Tsy region texEnvMath matchgroup=texMath'
+exe 'Tsy region texEnvDispMath matchgroup=texMath'
 	    \ 'start="'.s:start_re.'" end="\v\\end\{\z1\}"'
 	    \ 'contains=@texAllowedInMath'
 
 syn region texMathEnv transparent contained
-	    \ matchgroup=texIdentifier
+	    \ matchgroup=texMathEnvGroup
 	    \ start='\v\\begin\{\z(\a+\*?)\}'
 	    \ end='\v\\end\{\z1\}'
 	    \ contains=@texAllowedInMath
@@ -366,15 +366,9 @@ syn sync match texSync		grouphere NONE		'\v\\(sub)*section>'
 " {{{1 Highlighting groups
 hi def link texMath		    Type
 hi def link texCommand		    Statement
-hi def link texError		    Error
-hi def link texConst		    Constant
-hi def link texSpecial		    Special
-hi def link texIdentifier	    Identifier
-hi def link texPreProc		    PreProc
-hi def link texUnderline	    Underline
 hi def link texComment		    Comment
 
-hi def link texSectionCommands	    texPreProc
+hi def link texSectionCommands	    PreProc
 hi def link texSpecialCommands	    texCommand
 hi def link texGenericCommand	    texCommand
 hi def link texStarSpecial	    texSpecialCommands
@@ -382,14 +376,14 @@ hi def link texStarSpecial	    texSpecialCommands
 hi def link texPreambleCommand	    texCommand
 hi def link texPreambleGenCommand   texPreambleCommand
 
-hi def link texSpecialChars	    texSpecial
-hi def link texArgSep		    texSpecial
-hi def link texDimen		    texConst
-hi def link texTokens		    texIdentifier
+hi def link texSpecialChars	    Special
+hi def link texArgSep		    Special
+hi def link texDimen		    Constant
+hi def link texTokens		    Identifier
 
 hi def link texArgDelims	    texCommand
-hi def link texArgsSpclSpclOpt	    texConst
-hi def link texArgsSpclSpclReq	    texSpecial
+hi def link texArgsSpclSpclOpt	    Constant
+hi def link texArgsSpclSpclReq	    Special
 hi def link texArgsSpclNormOpt	    texArgsSpclSpclOpt
 
 hi def link texMathCommand	    texCommand
@@ -397,16 +391,17 @@ hi def link texMathCommands	    texCommand
 hi def link texArgsMathTextOpt	    texArgsSpclSpclOpt
 hi def link texArgsMathTextReq	    Normal
 hi def link texStarMathText	    texMathCommand
-hi def link texMathScripts	    texIdentifier
+hi def link texMathScripts	    Constant
+hi def link texMathEnvGroup	    Identifier
 
-hi def link texEnvName		    texIdentifier
+hi def link texEnvName		    Identifier
 hi def link texEnvCloseBrace	    texCommand
-hi def link texEnvMath		    texMath
+hi def link texEnvDispMath	    texMath
 hi def link texArgsEnvReq	    texArgsSpclSpclReq
 hi def link texArgsEnvOpt	    texArgsSpclSpclOpt
 
-hi def link texBraceError	    texError
-hi def link texEnvError		    texError
+hi def link texBraceError	    Error
+hi def link texEnvError		    Error
 hi def link texEnvEndDoc	    texCommand
 
 " {{{1 Cleanup
