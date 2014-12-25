@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Wed 24 Dec 2014 10:21:34 AM IST
+" Last Changed:	Thu 25 Dec 2014 07:17:17 AM IST
 " Version:	0.1
 "
 " Description:
@@ -209,10 +209,16 @@ syn region texArgsMathTextReq contained
 " Environments {{{1
 " Generic environments. Arguments are treated as texArgsSpclSpcl
 Tsy region texEnv transparent
-	    \ matchgroup=texEnvNormal
-	    \ start='\v\\begin\{\z(\a+\*?)\}'
-	    \ end='\v\\end\{\z1\}'
+	    \ matchgroup=texCommand
+	    \ start='\v\\begin\{%(\z(\a+\*?)\})@='
+	    \ end='\v\\end\{%(\z1\})@='
 	    \ contains=@TopSpell
+
+" \zs, \ze don't seem to work for this.
+"Tsy match texEnvName '\v\\begin\{\zs\a+\*?\ze\}' nextgroup=texEnvCloseBrace
+Tsy match texEnvName '\v%(\\%(begin|end)\{)@<=\a+\*?\ze\}'
+	    \ nextgroup=texEnvCloseBrace
+syn match texEnvCloseBrace '}' contained
 
 Tsy region texArgsEnvReq
 	    \ matchgroup=texArgDelims
@@ -390,7 +396,8 @@ hi def link texArgsMathTextReq	    Normal
 hi def link texStarMathText	    texMathCommand
 hi def link texMathScripts	    texIdentifier
 
-hi def link texEnvNormal	    texIdentifier
+hi def link texEnvName		    texIdentifier
+hi def link texEnvCloseBrace	    texCommand
 hi def link texEnvMath		    texMath
 hi def link texArgsEnvReq	    texArgsSpclSpclReq
 hi def link texArgsEnvOpt	    texArgsSpclSpclOpt
