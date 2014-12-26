@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Thu 25 Dec 2014 11:10:18 AM IST
+" Last Changed:	Fri 26 Dec 2014 06:43:03 PM IST
 " Version:	0.1
 "
 " Description:
@@ -257,11 +257,11 @@ Tsy match texEnvError '\\end\>'
 Tsy match texEnvEndDoc '\v\\end\{document\}'
 
 " Misc TeX Constructs. {{{1
-" {{{2 Misc TeX dimensions
+" TeX dimensions
 Tsy match texDimen '\v-?%(\.[0-9]+|([0-9]+(\.[0-9]+)?))%(pt|pc|bp|in|cm|mm|dd|cc|sp|ex|em)>'
 "syn keyword texUnits contained pt pc bp in cm mm dd cc sp ex em
 
-" {{{2 TeX macro tokens
+" TeX macro tokens
 Tsy match texTokens contained '#[0-9]'
 
 " TeX backslashed special characters
@@ -271,6 +271,10 @@ Tsy match texSpecialChars /\v\\%(\\%(\[[0-9]\])?|[$&%#{}_]|\s)/
 " Abbreviations, so that we don't get them marked as spelling errors
 " 2014-12-18: Adding transparent makes this ineffective.
 "Tsy match texAbbrevs /\v\C<[0-9A-Z]*[A-Z][0-9A-Z]+>/
+
+" Verb
+Tsy region texVerb start='\v(\\verb\*?)@<=\z([^\sa-zA-Z@])'	end='\z1'
+hi def link texVerb PreProc
 
 " {{{1 TeX Comments
 Tsy match  texComment	'%.*$'
