@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Fri 26 Dec 2014 06:43:03 PM IST
+" Last Changed:	Fri 26 Dec 2014 10:28:25 PM IST
 " Version:	0.1
 "
 " Description:
@@ -273,8 +273,13 @@ Tsy match texSpecialChars /\v\\%(\\%(\[[0-9]\])?|[$&%#{}_]|\s)/
 "Tsy match texAbbrevs /\v\C<[0-9A-Z]*[A-Z][0-9A-Z]+>/
 
 " Verb
-Tsy region texVerb start='\v(\\verb\*?)@<=\z([^\sa-zA-Z@])'	end='\z1'
-hi def link texVerb PreProc
+"Tsy region texVerb start='\v(\\verb\*?)@<=\z([^a-zA-Z@])'	end='\z1'
+Tsy region texVerb matchgroup=texCommand
+	    \ start='\v\\verb\*?\z([^a-zA-Z@])' end='\z1'
+
+Tsy region texVerb matchgroup=texCommand
+	    \ start='\v\\begin\{\z(lstlistings|verbatim)}'
+	    \ end='\v\\end\{\z1\}'
 
 " {{{1 TeX Comments
 Tsy match  texComment	'%.*$'
@@ -366,6 +371,7 @@ hi def link texSpecialChars	    Special
 hi def link texArgSep		    Special
 hi def link texDimen		    Constant
 hi def link texTokens		    Identifier
+hi def link texVerb		    PreProc
 
 hi def link texArgDelims	    texCommand
 hi def link texArgsSpclSpclOpt	    Constant
