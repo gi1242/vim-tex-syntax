@@ -61,6 +61,12 @@ checking missed many things I wanted checked (and erratically failed).
 `g:tex_isk`
 : `iskeyword` option for [TeX]/[LaTeX] files.
 
+## Links
+
+* [Github page](https://github.com/gi1242/vim-tex-syntax)
+
+* [Vim script page](http://www.vim.org/scripts/script.php?script_id=5076)
+
 [TeX]: http://en.wikipedia.org/wiki/TeX
 
 [LaTeX]: http://www.latex-project.org
