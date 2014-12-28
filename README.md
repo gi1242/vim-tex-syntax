@@ -45,9 +45,14 @@ wanted checked (and erratically failed).
 
 ## Configuration options.
 
+`g:tex_special_arg_commands`
+: Space separated list of commands with special arguments (e.g. `usepackage`).
+  Arguments of these commands will be colored and not spell checked.
+
 `g:tex_special_commands`
-: Space separated list of special commands (e.g. `usepackage`). Arguments of
-  these commands will be colored and not spell checked.
+: Space separated list of special commands (e.g. `large`). These will be
+  colored differently from other commands (but the arguments will not be
+  handled specially).
 
 `g:tex_section_commands`
 : Space separated list of sectioning commands (e.g. `chapter`).

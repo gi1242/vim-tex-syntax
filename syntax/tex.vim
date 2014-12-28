@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Fri 26 Dec 2014 10:28:25 PM IST
+" Last Changed:	Sun 28 Dec 2014 08:43:49 PM IST
 " Version:	0.1
 "
 " Description:
@@ -39,35 +39,42 @@ endfunction
 command! -nargs=+ Tsy :call s:syn_top( <q-args>, <f-args> )
 
 " {{{1 TeX Commands
-" Leading backslash for commands. Do this first, so it can be overridden
-Tsy match texCommand '\v\\%([[:alpha:]@]+)@='
-	    \ nextgroup=texSpecialCommands,texGenericCommand
-
 " Generic commands
-syn match texGenericCommand contained '\v[[:alpha:]@]+\*?'
+Tsy match texGenericCommand '\v\\[[:alpha:]@]+\*?'
 	    \ nextgroup=texArgsNormNorm skipwhite skipempty
 
-" Special commands
+" Commands with special arguments.
 let s:cmdlist = 
 	    \ 'usepackage RequirePackage documentclass'
 	    \ . ' input includegraphics setlength'
 	    \ . ' eqref cref ref cite cites pageref label'
 	    \ . ' bibliography bibliographystyle notcite'
 	    \ . ' url email subjclass'
-	    \ . ( exists( 'g:tex_special_commands' ) ? g:tex_special_commands : '')
+	    \ . ( exists( 'g:tex_special_arg_commands' ) ?
+		    \ g:tex_special_arg_commands : '' )
+let s:regexp = substitute( s:cmdlist, '\v\s+', '|', 'g' )
+exe 'Tsy match texSpecialArgCommands contained'
+	    \ 'nextgroup=@texArgsSpclSpcl skipwhite skipempty'
+	    \ '"\v\\%('.s:regexp.')>\*?"'
 
-exe 'syn keyword texSpecialCommands contained'
-	    \ 'nextgroup=@texArgsSpclSpcl,texStarSpecial skipwhite skipempty'
-	    \ s:cmdlist
-syn match texStarSpecial contained '\*' nextgroup=@texArgsSpclSpcl skipwhite skipempty
+" Special commands. (Highlighted differently; but arguments are normal)
+let s:cmdlist = 'tiny scriptsize footnotesize small normalsize large Large'
+	    \ . ' LARGE huge Huge'
+	    \ . ' text%(rm|tt|md|up|sl) emph'
+	    \ . ( exists( 'g:tex_special_commands' ) ? g:tex_special_commands : '')
+let s:regexp = substitute( s:cmdlist, '\v\s+', '|', 'g' )
+exe 'Tsy match texSpecialCommands'
+	    \ 'nextgroup=texArgsNormNorm skipwhite skipempty'
+	    \ '"\v\\%('.s:regexp.')>\*?"'
+
 
 " Section commands
 let s:cmdlist = 'part chapter section subsection subsubsection paragraph subparagraph'
 	    \ . ( exists( 'g:tex_section_commands' ) ? g:tex_section_commands : '')
-let s:start_re = substitute( s:cmdlist, '\v\s+', '|', 'g' )
+let s:regexp = substitute( s:cmdlist, '\v\s+', '|', 'g' )
 exe 'Tsy match texSectionCommands'
 	    \ 'nextgroup=texArgsNormNorm skipwhite skipempty'
-	    \ '"\v\\%('.s:start_re.')\*?"'
+	    \ '"\v\\%('.s:regexp.')>\*?"'
 
 
 " {{{1 Command arguments
@@ -118,9 +125,9 @@ Tsy region texPreamble fold
 syn cluster texPreambleStuff contains=texComment,texPreambleCommand
 
 syn match texPreambleCommand contained '\v\\%([[:alpha:]@]+)@='
-	    \ nextgroup=texPreambleGenCommand,texSpecialCommands
+	    \ nextgroup=texPreambleGenCommand,texSpecialArgCommands
 
-" Should be done before texSpecialCommands
+" Should be done before texSpecialArgCommands
 syn match texPreambleGenCommand contained '\v[[:alpha:]@]+\*?'
 	    \ nextgroup=texArgsPreamble skipwhite skipempty
 
@@ -220,15 +227,15 @@ Tsy region texArgsEnvOpt
 let s:cmdlist = 'theorem lemma proposition corollary conjecture definition'
 	    \ . ' remark example proof'
 	    \ . ( exists( 'g:tex_thm_envs' ) ? ' '.g:tex_thm_envs : '')
-let s:start_re = '\v(\\begin\{%('
+let s:regexp = '\v(\\begin\{%('
 	    \ . substitute( s:cmdlist, '\v\s+', '|', 'g' )
 	    \ . ')\*?\}\s*)@<='
 exe 'Tsy region texArgsEnvNormReq transparent matchgroup=texArgDelims'
-	    \ 'start="'.s:start_re.'\{"' 'end="}"'
+	    \ 'start="'.s:regexp.'\{"' 'end="}"'
 	    \ 'contains=@TopSpell'
 	    \ 'nextgroup=@texArgsNormNorm skipwhite skipempty'
 exe 'Tsy region texArgsEnvNormOpt transparent matchgroup=texArgDelims'
-	    \ 'start="'.s:start_re.'\["' 'end="]"'
+	    \ 'start="'.s:regexp.'\["' 'end="]"'
 	    \ 'contains=@TopSpell'
 	    \ 'nextgroup=@texArgsNormNorm skipwhite skipempty'
 
@@ -236,11 +243,11 @@ exe 'Tsy region texArgsEnvNormOpt transparent matchgroup=texArgDelims'
 let s:math_env_names = 'align alignat displaymath eqnarray equation gather'
 	    \ . ' IEEEeqnarray multline subequations xalignat xxalignat'
 	    \ . ( exists( 'g:tex_math_envs' ) ? ' '.g:tex_math_envs : '')
-let s:start_re = '\v\\begin\{\z(%('
+let s:regexp = '\v\\begin\{\z(%('
 	    \ . substitute( s:math_env_names, '\v\s+', '|', 'g' )
 	    \ . ')\*?)\}'
 exe 'Tsy region texEnvDispMath matchgroup=texMath'
-	    \ 'start="'.s:start_re.'" end="\v\\end\{\z1\}"'
+	    \ 'start="'.s:regexp.'" end="\v\\end\{\z1\}"'
 	    \ 'contains=@texAllowedInMath'
 
 syn region texMathEnv transparent contained
@@ -322,11 +329,11 @@ let s:fold_envs = 'theorem lemma proposition corollary conjecture definition'
 	    \ . ' remark example proof abstract figure thebibliography'
 	    \ . ( exists( 'g:tex_fold_envs' ) ? ' '.g:tex_fold_envs : '' )
 
-let s:start_re = '\v\\begin\{\z(%('
+let s:regexp = '\v\\begin\{\z(%('
 	    \ . substitute( s:fold_envs, '\v\s+', '|', 'g' )
 	    \ . ')\*?)\}'
 exe 'Tsy region texEnvFold transparent fold keepend extend'
-	    \ 'start="'.s:start_re.'" end="\v\\end\{\z1\}"'
+	    \ 'start="'.s:regexp.'" end="\v\\end\{\z1\}"'
 
 " Comment markers. Only %{{{{ and %}}}} are supported. No number versions
 " Use four braces (instead of 3) to avoid confusion with existing fold
@@ -360,9 +367,9 @@ hi def link texCommand		    Statement
 hi def link texComment		    Comment
 
 hi def link texSectionCommands	    PreProc
-hi def link texSpecialCommands	    texCommand
+hi def link texSpecialCommands	    Special
+hi def link texSpecialArgCommands   texCommand
 hi def link texGenericCommand	    texCommand
-hi def link texStarSpecial	    texSpecialCommands
 
 hi def link texPreambleCommand	    texCommand
 hi def link texPreambleGenCommand   texPreambleCommand
@@ -400,4 +407,4 @@ hi def link texEnvEndDoc	    texCommand
 let   b:current_syntax = "tex"
 let &cpo               = s:cpo_save
 
-unlet s:cpo_save s:math_env_names s:start_re s:fold_envs s:cmdlist
+unlet s:cpo_save s:math_env_names s:regexp s:fold_envs s:cmdlist
