@@ -1,9 +1,10 @@
 # vim-tex-syntax
 
 This is a rewrite of the default `syntax/tex.vim` used for [TeX]/[LaTeX],
-because I got fed-up with the default `syntax/tex.vim` file. My main
-complaints were that syntax folding didn't work the way I wanted, and spell
-checking missed many things I wanted checked (and erratically failed).
+because I finally got fed-up with the default `syntax/tex.vim` file. My main
+complaints were that syntax folding is painfully slow for large files and
+doesn't work the way I want. Also spell checking checking missed many things I
+wanted checked (and erratically failed).
 
 ## Features
 
@@ -24,6 +25,13 @@ checking missed many things I wanted checked (and erratically failed).
    (Note the extra brace, which is added to avoid double folding when editing
    a file with fold markers.)
 
+     Also syntax folding is about 3 to 4 times faster than the default syntax
+   script shipped with Vim. This only make a difference if you edit large
+   files. On my system, a file with 15,000 lines (and multiple sections /
+   subsections / etc.) takes about 7 seconds to highlight and fold with this
+   script, and it takes about 27 with the Vim default syntax script. (Both
+   scripts are snappy if folding is disabled.)
+
 2. *Spell checking.*
    Most everything that should be spell checked is. Arguments of all commands
    (except special commands in `g:tex_special_commands`) are spell checked,
@@ -31,11 +39,9 @@ checking missed many things I wanted checked (and erratically failed).
    `g:tex_thm_envs`) are not spell checked.
 
 3. *Brace matching.*
-   Extra open braces in an environment will produce an error in the enclosing 
-   `\end{...}` statement.
-   Extra closed braces are flagged.
-   Braces denoting command and script script arguments are highlighted
-   differently.
+   Extra open braces in an environment will produce an error in the enclosing
+   `\end{...}` statement. Extra closed braces are flagged. Braces denoting
+   command and script script arguments are highlighted differently.
 
 ## Configuration options.
 
