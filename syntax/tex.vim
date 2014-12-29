@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Sun 28 Dec 2014 08:43:49 PM IST
+" Last Changed:	Mon 29 Dec 2014 09:22:56 PM IST
 " Version:	0.1
 "
 " Description:
@@ -43,9 +43,11 @@ command! -nargs=+ Tsy :call s:syn_top( <q-args>, <f-args> )
 Tsy match texGenericCommand '\v\\[[:alpha:]@]+\*?'
 	    \ nextgroup=texArgsNormNorm skipwhite skipempty
 
+syn match texPreambleGenCommand contained '\v\\[[:alpha:]@]+\*?'
+	    \ nextgroup=texArgsPreamble skipwhite skipempty
+
 " Commands with special arguments.
-let s:cmdlist = 
-	    \ 'usepackage RequirePackage documentclass'
+let s:cmdlist = 'usepackage RequirePackage documentclass'
 	    \ . ' input includegraphics setlength'
 	    \ . ' eqref cref ref cite cites pageref label'
 	    \ . ' bibliography bibliographystyle notcite'
@@ -116,22 +118,7 @@ syn region texArgsSpclSpclReq contained
 	    \ contains=@TopNoSpell,texArgSep
 	    \ nextgroup=@texArgsSpclSpcl skipwhite skipempty
 
-" {{{1 Preamble
-" Should be defined after commands
-Tsy region texPreamble fold
-	    \ start='\v%(\\documentclass)@=' end='\v(\\begin\{document\})@='
-	    \ contains=@texPreambleStuff
-
-syn cluster texPreambleStuff contains=texComment,texPreambleCommand
-
-syn match texPreambleCommand contained '\v\\%([[:alpha:]@]+)@='
-	    \ nextgroup=texPreambleGenCommand,texSpecialArgCommands
-
-" Should be done before texSpecialArgCommands
-syn match texPreambleGenCommand contained '\v[[:alpha:]@]+\*?'
-	    \ nextgroup=texArgsPreamble skipwhite skipempty
-
-" Don't color arguments, but mark delimiters. Don't spell.
+" Arguments to preamble commands. (Don't color, mark delimiters, don't spell).
 syn region texArgsPreamble contained transparent
 	    \ matchgroup=texArgDelims start='\[' end='\]'
 	    \ nextgroup=texArgsPreamble skipwhite skipempty
@@ -141,8 +128,39 @@ syn region texArgsPreamble contained transparent
 	    \ nextgroup=texArgsPreamble skipwhite skipempty
 	    \ contains=@texArgsPreambleAllowed
 syn cluster texArgsPreambleAllowed
-	    \ add=texPreambleCommand,texBraceError,texTextBrace,texComment
+	    \ add=@texPreambleCommands,texBraceError,texTextBrace,texComment
 	    \ add=texMath,texSpecialChars,texDimen,texEnvDispMath,texTokens
+
+" Generic arguments of math commands
+syn region texArgsMathGen contained transparent
+	    \ matchgroup=texArgDelims start='\[' end='\]'
+	    \ nextgroup=texArgsMathGen skipwhite skipempty
+	    \ contains=@texAllowedInMath,texDimen
+syn region texArgsMathGen contained transparent
+	    \ matchgroup=texArgDelims start='{' end='}'
+	    \ nextgroup=texArgsMathGen skipwhite skipempty
+	    \ contains=@texAllowedInMath,texDimen
+
+" Arguments of math commands with a text required argument.
+syn cluster texArgsMathText contains=texArgsMathTextOpt,texArgsMathTextReq
+syn region texArgsMathTextOpt contained
+	    \ matchgroup=texArgDelims start='\[' end='\]'
+	    \ nextgroup=@texArgsMathText skipwhite skipempty
+	    \ contains=@TopNoSpell,texArgSep
+syn region texArgsMathTextReq contained
+	    \ matchgroup=texArgDelims start='{' end='}'
+	    \ nextgroup=@texArgsMathText skipwhite skipempty
+	    \ contains=TOP
+
+
+" {{{1 Preamble
+" Should be defined after commands
+Tsy region texPreamble transparent fold
+	    \ start='\v%(\\documentclass)@=' end='\v(\\begin\{document\})@='
+	    \ contains=@texPreambleStuff
+
+syn cluster texPreambleStuff contains=texComment,@texPreambleCommands
+syn cluster texPreambleCommands contains=texPreambleGenCommand,texSpecialArgCommands
 
 " Math {{{1
 " Cluster with the same name as the default tex.vim syntax file, so that it
@@ -154,7 +172,7 @@ Tsy region texMath start='\$\$' end='\$\$' contains=@texAllowedInMath
 Tsy region texMath start='\\(' end='\\)' contains=@texAllowedInMath
 Tsy region texMath start='\\\[' end='\\\]' contains=@texAllowedInMath
 
-let s:cmdlist = 'texMathBrace,texSpecialChars,texMathCommand,texMathEnv,'
+let s:cmdlist = 'texMathBrace,texSpecialChars,texMathCommands,texMathEnv,'
 	    \ . 'texMathScripts,texComment,texEnvError,texBraceError'
 exe 'syn cluster texAllowedInMath contains=' . s:cmdlist
 exe 'syn cluster texMathNoBraceError add='.s:cmdlist 'remove=texBraceError'
@@ -169,34 +187,19 @@ syn region texMathScriptArg contained transparent
 	    \ matchgroup=texMathScripts start='{' end='}'
 	    \ contains=@texAllowedInMath
 
+" Generic math commands
+syn match texMathCommands contained '\v\\[[:alpha:]@]+\*?'
+	    \ nextgroup=texArgsMathGen skipwhite skipempty
 
-"
-" Math commands with math arguments.
-syn match texMathCommand contained '\v\\%([[:alpha:]@]+)@=' nextgroup=texMathCommands
-syn match texMathCommands '\v[[:alpha:]@]+\*?' contained
-	    \ nextgroup=texMathMArg skipwhite skipempty
-syn region texMathMArg contained transparent
-	    \ matchgroup=texArgDelims start='\[' end='\]'
-	    \ nextgroup=texMathMArg skipwhite skipempty
-	    \ contains=@texAllowedInMath,texDimen
-syn region texMathMArg contained transparent
-	    \ matchgroup=texArgDelims start='{' end='}'
-	    \ nextgroup=texMathMArg skipwhite skipempty
-	    \ contains=@texAllowedInMath,texDimen
-
-syn keyword texMathCommands contained
-	    \ text textit textbf parbox raisebox mbox operatorname
-	    \ nextgroup=@texMathTArgs,texStarMathText skipwhite skipempty
-syn match texStarMathText contained '\*' nextgroup=@texMathTArgs skipwhite skipempty
-syn cluster texMathTArgs contains=texArgsMathTextOpt,texArgsMathTextReq
-syn region texArgsMathTextOpt contained
-	    \ matchgroup=texArgDelims start='\[' end='\]'
-	    \ nextgroup=@texMathTArgs skipwhite skipempty
-	    \ contains=@TopNoSpell,texArgSep
-syn region texArgsMathTextReq contained
-	    \ matchgroup=texArgDelims start='{' end='}'
-	    \ nextgroup=@texMathTArgs skipwhite skipempty
-	    \ contains=TOP
+" Math mode commands with a text argument.
+let s:cmdlist = 'makebox mbox framebox fbox raisebox parbox'
+	    \ . ' text%(rm|tt|md|up|sl|bf|it)? operatorname'
+	    \ . ( exists( 'g:tex_math_text_commands' ) ?
+		    \ g:tex_math_text_commands : '' )
+let s:regexp = substitute( s:cmdlist, '\v\s+', '|', 'g' )
+exe 'syn match texMathCommands contained'
+	    \ 'nextgroup=@texArgsMathText skipwhite skipempty'
+	    \ '"\v\\%('.s:regexp.')>\*?"'
 
 " Environments {{{1
 " Generic environments. Arguments are treated as texArgsSpclSpcl

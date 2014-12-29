@@ -57,6 +57,10 @@ wanted checked (and erratically failed).
 `g:tex_section_commands`
 : Space separated list of sectioning commands (e.g. `chapter`).
 
+`g:tex_math_text_commands`
+: Space separated list of commands in math mode with text arguments (e.g.
+  `text`).
+
 `g:tex_thm_envs`
 : Space separated list of theorem like environments (e.g. `theorem`).
   Arguments of these commands are spell checked (and not colored).
