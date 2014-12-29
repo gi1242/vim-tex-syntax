@@ -1,8 +1,8 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Mon 29 Dec 2014 09:22:56 PM IST
-" Version:	0.1
+" Last Changed:	Mon 29 Dec 2014 09:24:06 PM IST
+" Version:	0.2
 "
 " Description:
 "   Highlight LaTeX documents without the ridiculous amount of complexity used
