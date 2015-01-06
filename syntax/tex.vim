@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Mon 29 Dec 2014 09:24:06 PM IST
+" Last Changed:	Tue 06 Jan 2015 05:05:19 PM IST
 " Version:	0.2
 "
 " Description:
@@ -189,7 +189,7 @@ syn region texMathScriptArg contained transparent
 
 " Generic math commands
 syn match texMathCommands contained '\v\\[[:alpha:]@]+\*?'
-	    \ nextgroup=texArgsMathGen skipwhite skipempty
+	    \ nextgroup=texArgsMathGen
 
 " Math mode commands with a text argument.
 let s:cmdlist = 'makebox mbox framebox fbox raisebox parbox'
