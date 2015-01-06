@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Tue 06 Jan 2015 05:05:19 PM IST
+" Last Changed:	Tue 06 Jan 2015 11:57:25 PM IST
 " Version:	0.2
 "
 " Description:
@@ -173,7 +173,7 @@ Tsy region texMath start='\\(' end='\\)' contains=@texAllowedInMath
 Tsy region texMath start='\\\[' end='\\\]' contains=@texAllowedInMath
 
 let s:cmdlist = 'texMathBrace,texSpecialChars,texMathCommands,texMathEnv,'
-	    \ . 'texMathScripts,texComment,texEnvError,texBraceError'
+	    \ . 'texMathScripts,texComment,texEnvName,texEnvError,texBraceError'
 exe 'syn cluster texAllowedInMath contains=' . s:cmdlist
 exe 'syn cluster texMathNoBraceError add='.s:cmdlist 'remove=texBraceError'
 
@@ -254,9 +254,9 @@ exe 'Tsy region texEnvDispMath matchgroup=texMath'
 	    \ 'contains=@texAllowedInMath'
 
 syn region texMathEnv transparent contained
-	    \ matchgroup=texMathEnvGroup
-	    \ start='\v\\begin\{\z(\a+\*?)\}'
-	    \ end='\v\\end\{\z1\}'
+	    \ matchgroup=texCommand
+	    \ start='\v\\begin\{%(\z(\a+\*?)\})@='
+	    \ end='\v\\end\{%(\z1\})@='
 	    \ contains=@texAllowedInMath
 
 " Unmatched end environments
@@ -287,7 +287,7 @@ Tsy match texSpecialChars /\v\\%(\\%(\[[0-9]\])?|[$&%#{}_]|\s)/
 Tsy region texVerb matchgroup=texCommand
 	    \ start='\v\\verb\*?\z([^a-zA-Z@])' end='\z1'
 
-Tsy region texVerb matchgroup=texCommand
+Tsy region texVerb
 	    \ start='\v\\begin\{\z(lstlistings|verbatim)}'
 	    \ end='\v\\end\{\z1\}'
 
