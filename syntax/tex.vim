@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Tue 06 Jan 2015 11:57:25 PM IST
+" Last Changed:	Wed 07 Jan 2015 01:40:11 PM IST
 " Version:	0.2
 "
 " Description:
@@ -119,11 +119,11 @@ syn region texArgsSpclSpclReq contained
 	    \ nextgroup=@texArgsSpclSpcl skipwhite skipempty
 
 " Arguments to preamble commands. (Don't color, mark delimiters, don't spell).
-syn region texArgsPreamble contained transparent
+syn region texArgsPreamble contained
 	    \ matchgroup=texArgDelims start='\[' end='\]'
 	    \ nextgroup=texArgsPreamble skipwhite skipempty
 	    \ contains=@texArgsPreambleAllowed
-syn region texArgsPreamble contained transparent
+syn region texArgsPreamble contained
 	    \ matchgroup=texArgDelims start='{' end='}'
 	    \ nextgroup=texArgsPreamble skipwhite skipempty
 	    \ contains=@texArgsPreambleAllowed
