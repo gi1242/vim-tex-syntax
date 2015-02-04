@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Wed 07 Jan 2015 01:40:11 PM IST
+" Last Changed:	Thu 29 Jan 2015 03:46:43 PM EST
 " Version:	0.2
 "
 " Description:
@@ -268,7 +268,7 @@ Tsy match texEnvEndDoc '\v\\end\{document\}'
 
 " Misc TeX Constructs. {{{1
 " TeX dimensions
-Tsy match texDimen '\v-?%(\.[0-9]+|([0-9]+(\.[0-9]+)?))%(pt|pc|bp|in|cm|mm|dd|cc|sp|ex|em)>'
+Tsy match texDimen '\v<-?%(\.[0-9]+|([0-9]+(\.[0-9]+)?))%(pt|pc|bp|in|cm|mm|dd|cc|sp|ex|em)>'
 "syn keyword texUnits contained pt pc bp in cm mm dd cc sp ex em
 
 " TeX macro tokens
@@ -307,29 +307,38 @@ syn region texNestedIf contained transparent
 Tsy region texSectionFold   transparent fold keepend
 	    \ start='\v%(%(\\begin\{document\}.*$\n)@<=^|\\section)'
 	    \ end='\v\n%(\s*%(\\end\{document\}|\\section))@='
-	    \ end='\v\n%(\s*(\\bibliographystyle|\\begin\{thebibliography\}))@='
+	    \ end='\v\n%(\s*\\bibliography%(style)?)@='
+	    \ end='\v\n%(\s*\\begin\{%(thebibliography|biblist|bibdiv)\})@='
 	    \ end='%endsection'
 
 Tsy region texSubsectionFold transparent fold keepend
 	    \ start='\v\\subsection'
 	    \ end='\v\n%(\s*%(\\end\{document\}|\\%(sub)?section))@='
-	    \ end='\v\n%(\s*(\\bibliographystyle|\\begin\{thebibliography\}))@='
+	    \ end='\v\n%(\s*\\bibliography%(style)?)@='
+	    \ end='\v\n%(\s*\\begin\{%(thebibliography|biblist|bibdiv)\})@='
 	    \ end='\v\%end%(sub)?section'
 
 Tsy region texSubsubsectionFold transparent fold keepend
 	    \ start='\v\\subsubsection'
 	    \ end='\v\n%(\s*%(\\end\{document\}|\\%(sub)*section))@='
-	    \ end='\v\n%(\s*(\\bibliographystyle|\\begin\{thebibliography\}))@='
+	    \ end='\v\n%(\s*\\bibliography%(style)?)@='
+	    \ end='\v\n%(\s*\\begin\{%(thebibliography|biblist|bibdiv)\})@='
 	    \ end='\v\%end%(sub)*section'
 
 " BibTeX bibliography.
 Tsy region texBibFold transparent fold keepend
-	    \ start='\v\\bibliographystyle'
+	    \ start='\v\\bibliography%(style)?'
 	    \ end='\v\n%(\s*\\end\{document\})@='
+	    \ contains=TOP,texBibFold
+
+syn region texBibitemFold fold containedin=texEnv
+	    \ start='\v^\s*\\bib\{.*$'
+	    \ end='\v^%(\s*\})'
 
 " Fold environments (theorems, etc.)
 let s:fold_envs = 'theorem lemma proposition corollary conjecture definition'
-	    \ . ' remark example proof abstract figure thebibliography'
+	    \ . ' remark example proof abstract figure'
+	    \ . ' thebibliography biblist bibdiv'
 	    \ . ( exists( 'g:tex_fold_envs' ) ? ' '.g:tex_fold_envs : '' )
 
 let s:regexp = '\v\\begin\{\z(%('
