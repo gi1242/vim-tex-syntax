@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Thu 29 Jan 2015 03:46:43 PM EST
+" Last Changed:	Fri 13 Feb 2015 10:54:59 PM EST
 " Version:	0.2
 "
 " Description:
@@ -357,7 +357,8 @@ Tsy region texCommentFold transparent fold keepend extend
 " Synchronization {{{1
 "syn sync maxlines=200
 syn sync minlines=50
-syn sync match texSync		grouphere NONE		'\v\\(sub)*section>'
+"syn sync match texSync		grouphere NONE		'\v\\(sub)*section>'
+syn sync match texSync		grouphere texEnv	'\v\\(sub)*section>'
 
 " Sync items from the official VIM syntax file. Matching one of these might
 " break the end proof environment, since proofs can be quite long.
