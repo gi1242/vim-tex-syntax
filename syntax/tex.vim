@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Fri 13 Feb 2015 10:54:59 PM EST
+" Last Changed:	Sun 22 Mar 2015 03:44:11 PM EDT
 " Version:	0.2
 "
 " Description:
@@ -50,7 +50,7 @@ syn match texPreambleGenCommand contained '\v\\[[:alpha:]@]+\*?'
 let s:cmdlist = 'usepackage RequirePackage documentclass'
 	    \ . ' input includegraphics setlength'
 	    \ . ' eqref cref ref cite cites pageref label'
-	    \ . ' bibliography bibliographystyle notcite'
+	    \ . ' bibliography bibliographystyle nocite'
 	    \ . ' url email subjclass'
 	    \ . ( exists( 'g:tex_special_arg_commands' ) ?
 		    \ g:tex_special_arg_commands : '' )
@@ -329,7 +329,6 @@ Tsy region texSubsubsectionFold transparent fold keepend
 Tsy region texBibFold transparent fold keepend
 	    \ start='\v\\bibliography%(style)?'
 	    \ end='\v\n%(\s*\\end\{document\})@='
-	    \ contains=TOP,texBibFold
 
 syn region texBibitemFold fold containedin=texEnv
 	    \ start='\v^\s*\\bib\{.*$'
