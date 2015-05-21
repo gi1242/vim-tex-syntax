@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Sun 22 Mar 2015 03:44:11 PM EDT
+" Last Changed:	Wed 20 May 2015 08:07:22 PM EDT
 " Version:	0.2
 "
 " Description:
@@ -51,7 +51,7 @@ let s:cmdlist = 'usepackage RequirePackage documentclass'
 	    \ . ' input includegraphics setlength'
 	    \ . ' eqref cref ref cite cites pageref label'
 	    \ . ' bibliography bibliographystyle nocite'
-	    \ . ' url email subjclass'
+	    \ . ' url email subjclass texttt'
 	    \ . ( exists( 'g:tex_special_arg_commands' ) ?
 		    \ g:tex_special_arg_commands : '' )
 let s:regexp = substitute( s:cmdlist, '\v\s+', '|', 'g' )
@@ -62,7 +62,7 @@ exe 'Tsy match texSpecialArgCommands contained'
 " Special commands. (Highlighted differently; but arguments are normal)
 let s:cmdlist = 'tiny scriptsize footnotesize small normalsize large Large'
 	    \ . ' LARGE huge Huge'
-	    \ . ' text%(rm|tt|md|up|sl) emph'
+	    \ . ' text%(it|rm|md|up|sl) emph'
 	    \ . ( exists( 'g:tex_special_commands' ) ? g:tex_special_commands : '')
 let s:regexp = substitute( s:cmdlist, '\v\s+', '|', 'g' )
 exe 'Tsy match texSpecialCommands'
