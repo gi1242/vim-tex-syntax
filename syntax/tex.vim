@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Wed 01 Jul 2015 04:34:17 PM CDT
+" Last Changed:	Wed 01 Jul 2015 04:40:31 PM CDT
 " Version:	0.2
 "
 " Description:
@@ -210,12 +210,12 @@ exe 'syn match texMathCommand contained'
 let s:cmdlist = '[bB]igg?[lr]? left right'
 let s:regexp = '\v\\%(' . substitute( s:cmdlist, '\v\s+', '|', 'g' )
 	    \ . ')'
-	    "\ . ')\s*%([.()[\]]|\\[{}])'
+	    "\ . ')\s*%([.()|[\]]|\\[{|}])'
 exe 'Tsy match texMathParenCommand contained' "'".s:regexp."'"
 
 syn region texMathParen transparent contained matchgroup=texEnvName
-	    \ start='\v\\left\s*%([.([]|\\\{)'
-	    \ end='\v\\right\s*%([.)\]]|\\\})'
+	    \ start='\v\\left\s*%([.(|[]|\\[{|])'
+	    \ end='\v\\right\s*%([.)|\]]|\\[}|])'
 	    \ contains=@texAllowedInMath
 
 " Environments {{{1
