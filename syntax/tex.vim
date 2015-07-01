@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Fri 26 Jun 2015 11:16:03 AM EDT
+" Last Changed:	Tue 30 Jun 2015 11:22:15 PM CDT
 " Version:	0.2
 "
 " Description:
@@ -73,7 +73,6 @@ let s:regexp = substitute( s:cmdlist, '\v\s+', '|', 'g' )
 exe 'Tsy match texSpecialCommands'
 	    \ 'nextgroup=texArgsNormNorm skipwhite skipempty'
 	    \ '"\v\\%('.s:regexp.')>\*?"'
-
 
 " Section commands
 let s:cmdlist = 'part chapter section subsection subsubsection paragraph subparagraph'
@@ -165,7 +164,7 @@ Tsy region texPreamble transparent fold
 	    \ contains=@texPreambleStuff
 
 syn cluster texPreambleStuff contains=texComment,@texPreambleCommands
-syn cluster texPreambleCommands contains=texPreambleGenCommand,texSpecialArgCommands
+syn cluster texPreambleCommands contains=texPreambleGenCommand,texSpecialArgCommands,texMathParenCommand
 
 " Math {{{1
 " Cluster with the same name as the default tex.vim syntax file, so that it
@@ -177,8 +176,9 @@ Tsy region texMath start='\$\$' end='\$\$' contains=@texAllowedInMath
 Tsy region texMath start='\\(' end='\\)' contains=@texAllowedInMath
 Tsy region texMath start='\\\[' end='\\\]' contains=@texAllowedInMath
 
-let s:cmdlist = 'texMathBrace,texSpecialChars,texMathCommands,texMathEnv,'
-	    \ . 'texMathScripts,texComment,texEnvName,texEnvError,texBraceError'
+let s:cmdlist = 'texMathBrace,texSpecialChars,texMathCommand,texMathEnv,'
+	    \ . 'texMathScripts,texComment,texEnvName,texEnvError,'
+	    \ . 'texBraceError,texMathParen,texMathParenCommand'
 exe 'syn cluster texAllowedInMath contains=' . s:cmdlist
 exe 'syn cluster texMathNoBraceError add='.s:cmdlist 'remove=texBraceError'
 
@@ -193,7 +193,7 @@ syn region texMathScriptArg contained transparent
 	    \ contains=@texAllowedInMath
 
 " Generic math commands
-syn match texMathCommands contained '\v\\[[:alpha:]@]+\*?'
+syn match texMathCommand contained '\v\\[[:alpha:]@]+\*?'
 	    \ nextgroup=texArgsMathGen
 
 " Math mode commands with a text argument.
@@ -202,9 +202,20 @@ let s:cmdlist = 'makebox mbox framebox fbox raisebox parbox'
 	    \ . ( exists( 'g:tex_math_text_commands' ) ?
 		    \ g:tex_math_text_commands : '' )
 let s:regexp = substitute( s:cmdlist, '\v\s+', '|', 'g' )
-exe 'syn match texMathCommands contained'
+exe 'syn match texMathCommand contained'
 	    \ 'nextgroup=@texArgsMathText skipwhite skipempty'
 	    \ '"\v\\%('.s:regexp.')>\*?"'
+
+" Parenthesis.
+let s:cmdlist = '[bB]igg?[lr]? left right'
+let s:regexp = '\v\\%(' . substitute( s:cmdlist, '\v\s+', '|', 'g' )
+	    \ . ')\s*%([.()[\]]|\\[{}])'
+exe 'Tsy match texMathParenCommand contained' "'".s:regexp."'"
+
+syn region texMathParen transparent contained matchgroup=texEnvName
+	    \ start='\v\\left\s*%([.([]|\\\{)'
+	    \ end='\v\\right\s*%([.)\]]|\\\})'
+	    \ contains=@texAllowedInMath
 
 " Environments {{{1
 " Generic environments. Arguments are treated as texArgsSpclSpcl
@@ -403,7 +414,8 @@ hi def link texArgsSpclSpclReq	    Special
 hi def link texArgsSpclNormOpt	    texArgsSpclSpclOpt
 
 hi def link texMathCommand	    texCommand
-hi def link texMathCommands	    texCommand
+hi def link texMathParen	    Identifier
+hi def link texMathParenCommand	    texMathParen
 hi def link texArgsMathTextOpt	    texArgsSpclSpclOpt
 hi def link texArgsMathTextReq	    Normal
 hi def link texStarMathText	    texMathCommand
