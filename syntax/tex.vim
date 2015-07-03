@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Wed 01 Jul 2015 04:40:31 PM CDT
+" Last Changed:	Fri 03 Jul 2015 05:08:05 PM CDT
 " Version:	0.2
 "
 " Description:
@@ -22,6 +22,10 @@ set cpo&vim
 " One may override this iskeyword setting by providing
 " g:tex_isk
 let &l:isk = exists( 'g:tex_isk' ) ? g:tex_isk : '@-@,48-57,a-z,A-Z,192-255'
+if !exists( 'b:is_sty' )
+    let b:is_sty = exists( 'g:tex_is_sty' ) ? g:tex_is_sty :
+		\	( expand( '%:e' ) =~? '\v(sty|cls)' ? 1 : 0 )
+endif
 
 " Spell {{{1
 syn spell toplevel
@@ -47,7 +51,7 @@ syn match texPreambleGenCommand contained '\v\\[[:alpha:]@]+\*?'
 	    \ nextgroup=texArgsPreamble skipwhite skipempty
 
 " Commands with special arguments.
-let s:cmdlist = 'usepackage RequirePackage documentclass'
+let s:cmdlist = 'usepackage RequirePackage ProvidesPackage documentclass'
 	    \ . ' input includegraphics setlength'
 	    \ . ' eqref cref ref cite cites pageref label'
 	    \ . ' bibliography bibliographystyle nocite'
@@ -159,9 +163,15 @@ syn region texArgsMathTextReq contained
 
 " {{{1 Preamble
 " Should be defined after commands
-Tsy region texPreamble transparent fold
+if b:is_sty
+    " Whole document is preamble, but don't fold it.
+    Tsy region texPreamble transparent start='\v%^' end='\v%$'
+	    \ contains=@texPreambleStuff
+else
+    Tsy region texPreamble transparent fold
 	    \ start='\v%(\\documentclass)@=' end='\v(\\begin\{document\})@='
 	    \ contains=@texPreambleStuff
+endif
 
 syn cluster texPreambleStuff contains=texComment,@texPreambleCommands
 syn cluster texPreambleCommands contains=texPreambleGenCommand,texSpecialArgCommands,texMathParenCommand
