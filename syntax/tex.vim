@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Fri 03 Jul 2015 05:08:05 PM CDT
+" Last Changed:	Fri 17 Jul 2015 06:00:40 PM EDT
 " Version:	0.2
 "
 " Description:
@@ -59,12 +59,12 @@ let s:cmdlist = 'usepackage RequirePackage ProvidesPackage documentclass'
 	    \ . ( exists( 'g:tex_special_arg_commands' ) ?
 		    \ g:tex_special_arg_commands : '' )
 let s:regexp = substitute( s:cmdlist, '\v\s+', '|', 'g' )
-exe 'Tsy match texSpecialArgCommands contained'
+exe 'Tsy match texSpecialArgCommands'
 	    \ 'nextgroup=@texArgsSpclSpcl skipwhite skipempty'
 	    \ '"\v\\%('.s:regexp.')>\*?"'
 
 " Treat title specially (could be in preamble or document)
-Tsy match texSpecialArgCommands contained
+Tsy match texSpecialArgCommands
 	    \ nextgroup=@texArgsNormNorm skipwhite skipempty
 	    \ '\v\\title'
 
