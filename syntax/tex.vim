@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Fri 17 Jul 2015 06:00:40 PM EDT
+" Last Changed:	Sun 19 Jul 2015 12:06:39 PM EDT
 " Version:	0.2
 "
 " Description:
@@ -332,30 +332,36 @@ syn region texNestedIf contained transparent
 
 " Fold by sections / subsections
 Tsy region texSectionFold   transparent fold keepend
-	    \ start='\v%(%(\\begin\{document\}.*$\n)@<=^|\\section)'
-	    \ end='\v\n%(\s*%(\\end\{document\}|\\section))@='
+	    \ start='\v%(\\begin\{document\}.*$\n)@<=^'
+	    \ start='\v\\section|\%startsection'
+	    \ end='\v\n%(\s*\\end\{document\})@='
+	    \ end='\v\n%(\s*%(\\section|\%startsection))@='
 	    \ end='\v\n%(\s*\\bibliography%(style)?)@='
-	    \ end='\v\n%(\s*\\begin\{%(thebibliography|biblist|bibdiv)\})@='
+	    \ end='\v\n%(\s*\\begin\{%(thebibliography|bibdiv)\})@='
 	    \ end='%endsection'
 
 Tsy region texSubsectionFold transparent fold keepend
-	    \ start='\v\\subsection'
-	    \ end='\v\n%(\s*%(\\end\{document\}|\\%(sub)?section))@='
+	    \ start='\v\\subsection|\%startsubsection'
+	    \ end='\v\n%(\s*\\end\{document\})@='
+	    \ end='\v\n%(\s*%(\\%(sub)?section|\%start%(sub)?section))@='
 	    \ end='\v\n%(\s*\\bibliography%(style)?)@='
-	    \ end='\v\n%(\s*\\begin\{%(thebibliography|biblist|bibdiv)\})@='
+	    \ end='\v\n%(\s*\\begin\{%(thebibliography|bibdiv)\})@='
 	    \ end='\v\%end%(sub)?section'
 
 Tsy region texSubsubsectionFold transparent fold keepend
-	    \ start='\v\\subsubsection'
-	    \ end='\v\n%(\s*%(\\end\{document\}|\\%(sub)*section))@='
+	    \ start='\v\\subsubsection|\%startsubsubsection'
+	    \ end='\v\n%(\s*\\end\{document\})@='
+	    \ end='\v\n%(\s*%(\\%(sub)*section|\%start%(sub)*section))@='
 	    \ end='\v\n%(\s*\\bibliography%(style)?)@='
-	    \ end='\v\n%(\s*\\begin\{%(thebibliography|biblist|bibdiv)\})@='
+	    \ end='\v\n%(\s*\\begin\{%(thebibliography|bibdiv)\})@='
 	    \ end='\v\%end%(sub)*section'
 
 " BibTeX bibliography.
 Tsy region texBibFold transparent fold keepend
 	    \ start='\v\\bibliography%(style)?'
 	    \ end='\v\n%(\s*\\end\{document\})@='
+	    \ end='\v\n%(\s*%(\\%(sub)*section|\%start%(sub)*section))@='
+	    \ end='\v\%end%(sub)*section'
 
 syn region texBibitemFold fold containedin=texEnv
 	    \ start='\v^\s*\\bib\{.*$'
@@ -373,12 +379,10 @@ let s:regexp = '\v\\begin\{\z(%('
 exe 'Tsy region texEnvFold transparent fold keepend extend'
 	    \ 'start="'.s:regexp.'" end="\v\\end\{\z1\}"'
 
-" Comment markers. Only %{{{{ and %}}}} are supported. No number versions
-" Use four braces (instead of 3) to avoid confusion with existing fold
-" markers.
+" Comment markers. Only %{{{ and %}}} are supported. No number versions
 Tsy region texCommentFold transparent fold keepend extend
-	    \ start='\v^.*\%.*\{{4}'
-	    \ end='\v\%.*\}{4}'
+	    \ start='\v^.*\%.*\{{3}[0-9]@!'
+	    \ end='\v\%.*\}{3}[0-9]@!'
 
 " Synchronization {{{1
 "syn sync maxlines=200

@@ -19,18 +19,16 @@ wanted checked (and erratically failed).
         +--  3 lines: \bibliographystyle{habbrv}----------------
         \end{document}
 
-     Additionally theorems, lemmas, proofs etc. are folded. Additional
-   environment names for folding can be configured using `g:tex_fold_envs`.
-   For one time folds, you can also use the markers `%{{{{` and `%}}}}`.
-   (Note the extra brace, which is added to avoid double folding when editing
-   a file with fold markers.)
+     Additionally theorems, lemmas, proofs etc. are also folded, manual folds
+   can be added. Syntax folding is about 3 to 4 times faster than the default
+   syntax script shipped with Vim. This only make a difference if you edit
+   large files. On my system, a file with 15,000 lines (and multiple sections
+   / subsections / etc.) takes about 7 seconds to highlight and fold with this
+   script, and it takes about 27 with the Vim default syntax script. Both
+   scripts are snappy if folding is disabled, of course. If you plan on
+   editing large TeX/LaTeX files and using syntax folding I recommend using
+   the [FastFold] plugin in addition to this script.
 
-     Also syntax folding is about 3 to 4 times faster than the default syntax
-   script shipped with Vim. This only make a difference if you edit large
-   files. On my system, a file with 15,000 lines (and multiple sections /
-   subsections / etc.) takes about 7 seconds to highlight and fold with this
-   script, and it takes about 27 with the Vim default syntax script. (Both
-   scripts are snappy if folding is disabled.)
 
 2. *Spell checking.*
    Most everything that should be spell checked is. Arguments of all commands
@@ -71,10 +69,24 @@ wanted checked (and erratically failed).
 
 `g:tex_fold_envs`
 : Set this to a space separated list of environment names that should start a
-  fold. For one time folds, you can also use the markers `%{{{{` and `%}}}}`.
+  fold.
 
 `g:tex_isk`
 : `iskeyword` option for [TeX]/[LaTeX] files.
+
+## Additional syntax folds
+
+In case the automatically created syntax folds created are not sufficient for
+your purposes, you can adjust it manually in the following ways.
+
+1. The comment markers `%{{{` and `%}}}` can be used to create a fold.
+   The numbered versions `%{{{1` etc. are ignored.
+
+2. Section / subsection level folds can manually be started using
+   `%startsection`, `%startsubsection` or `%startsubsubsection`.
+
+3. Section / subsection level folds can be manually closed using
+   using `%endsection`, `%endsubsection` or `%endsubsubsection`.
 
 ## Links
 
