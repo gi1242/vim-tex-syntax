@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Sun 19 Jul 2015 12:06:39 PM EDT
+" Last Changed:	Fri 24 Jul 2015 10:44:39 PM EDT
 " Version:	0.2
 "
 " Description:
@@ -331,35 +331,61 @@ syn region texNestedIf contained transparent
 " {{{1 Folding
 
 " Fold by sections / subsections
-Tsy region texSectionFold   transparent fold keepend
+"Tsy region texFrontmatterFold transparent fold keepend
+"	    \ start='\v\\frontmattter' end='\v\n%(\s*\\mainmatter)@='
+
+Tsy region texFrontmatterFold   transparent fold keepend
 	    \ start='\v%(\\begin\{document\}.*$\n)@<=^'
-	    \ start='\v\\section|\%startsection'
 	    \ end='\v\n%(\s*\\end\{document\})@='
+	    \ end='\v\n%(\s*%(\\chapter|\%startchapter))@='
 	    \ end='\v\n%(\s*%(\\section|\%startsection))@='
 	    \ end='\v\n%(\s*\\bibliography%(style)?)@='
 	    \ end='\v\n%(\s*\\begin\{%(thebibliography|bibdiv)\})@='
+
+Tsy region texChapterFold   transparent fold keepend
+	    \ start='\v\\chapter|\%startchapter'
+	    \ end='\v\n%(\s*\\end\{document\})@='
+	    \ end='\v\n%(\s*%(\\chapter|\%startchapter))@='
+	    \ end='%endchapter'
+	    \ end='\v\n%(\s*\\bibliography%(style)?)@='
+	    \ end='\v\n%(\s*\\begin\{%(thebibliography|bibdiv)\})@='
+
+Tsy region texSectionFold   transparent fold keepend
+	    \ start='\v\\section|\%startsection'
+	    \ end='\v\n%(\s*\\end\{document\})@='
+	    \ end='\v\n%(\s*%(\\chapter|\%startchapter))@='
+	    \ end='%endchapter'
+	    \ end='\v\n%(\s*%(\\section|\%startsection))@='
 	    \ end='%endsection'
+	    \ end='\v\n%(\s*\\bibliography%(style)?)@='
+	    \ end='\v\n%(\s*\\begin\{%(thebibliography|bibdiv)\})@='
 
 Tsy region texSubsectionFold transparent fold keepend
 	    \ start='\v\\subsection|\%startsubsection'
 	    \ end='\v\n%(\s*\\end\{document\})@='
+	    \ end='\v\n%(\s*%(\\chapter|\%startchapter))@='
+	    \ end='%endchapter'
 	    \ end='\v\n%(\s*%(\\%(sub)?section|\%start%(sub)?section))@='
+	    \ end='\v\%end%(sub)?section'
 	    \ end='\v\n%(\s*\\bibliography%(style)?)@='
 	    \ end='\v\n%(\s*\\begin\{%(thebibliography|bibdiv)\})@='
-	    \ end='\v\%end%(sub)?section'
 
 Tsy region texSubsubsectionFold transparent fold keepend
 	    \ start='\v\\subsubsection|\%startsubsubsection'
 	    \ end='\v\n%(\s*\\end\{document\})@='
+	    \ end='\v\n%(\s*%(\\chapter|\%startchapter))@='
+	    \ end='%endchapter'
 	    \ end='\v\n%(\s*%(\\%(sub)*section|\%start%(sub)*section))@='
+	    \ end='\v\%end%(sub)*section'
 	    \ end='\v\n%(\s*\\bibliography%(style)?)@='
 	    \ end='\v\n%(\s*\\begin\{%(thebibliography|bibdiv)\})@='
-	    \ end='\v\%end%(sub)*section'
 
 " BibTeX bibliography.
 Tsy region texBibFold transparent fold keepend
 	    \ start='\v\\bibliography%(style)?'
 	    \ end='\v\n%(\s*\\end\{document\})@='
+	    \ end='\v\n%(\s*%(\\chapter|\%startchapter))@='
+	    \ end='%endchapter'
 	    \ end='\v\n%(\s*%(\\%(sub)*section|\%start%(sub)*section))@='
 	    \ end='\v\%end%(sub)*section'
 
