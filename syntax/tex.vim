@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Fri 24 Jul 2015 10:44:39 PM EDT
+" Last Changed:	Thu 30 Jul 2015 10:19:09 AM EDT
 " Version:	0.2
 "
 " Description:
@@ -65,8 +65,8 @@ exe 'Tsy match texSpecialArgCommands'
 
 " Treat title specially (could be in preamble or document)
 Tsy match texSpecialArgCommands
-	    \ nextgroup=@texArgsNormNorm skipwhite skipempty
-	    \ '\v\\title'
+	    \ nextgroup=texArgsNormNorm skipwhite skipempty
+	    \ '\v\\title>'
 
 " Special commands. (Highlighted differently; but arguments are normal)
 let s:cmdlist = 'tiny scriptsize footnotesize small normalsize large Large'
@@ -336,6 +336,7 @@ syn region texNestedIf contained transparent
 
 Tsy region texFrontmatterFold   transparent fold keepend
 	    \ start='\v%(\\begin\{document\}.*$\n)@<=^'
+	    \ end='\v\%endfrontmatter'
 	    \ end='\v\n%(\s*\\end\{document\})@='
 	    \ end='\v\n%(\s*%(\\chapter|\%startchapter))@='
 	    \ end='\v\n%(\s*%(\\section|\%startsection))@='

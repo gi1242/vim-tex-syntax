@@ -83,10 +83,16 @@ your purposes, you can adjust it manually in the following ways.
    The numbered versions `%{{{1` etc. are ignored.
 
 2. Section / subsection level folds can manually be started using
-   `%startsection`, `%startsubsection` or `%startsubsubsection`.
+   `%startsection`, `%startsubsection` or `%startsubsubsection`. (Similarly
+   for chapters).
 
 3. Section / subsection level folds can be manually closed using
-   using `%endsection`, `%endsubsection` or `%endsubsubsection`.
+   using `%endsection`, `%endsubsection` or `%endsubsubsection`. (Similarly
+   for chapters)
+
+4. The front matter fold (that starts on the line after `\begin{document}`)
+   usually ends when a section or chapter is started. If you want to end it
+   earlier, use the comment `%endfrontmatter'
 
 ## Links
 
