@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Thu 30 Jul 2015 10:19:09 AM EDT
+" Last Changed:	Sat 01 Aug 2015 12:12:35 PM EDT
 " Version:	0.2
 "
 " Description:
@@ -219,7 +219,7 @@ exe 'syn match texMathCommand contained'
 " Parenthesis.
 let s:cmdlist = '[bB]igg?[lr]? left right'
 let s:regexp = '\v\\%(' . substitute( s:cmdlist, '\v\s+', '|', 'g' )
-	    \ . ')'
+	    \ . ')>'
 	    "\ . ')\s*%([.()|[\]]|\\[{|}])'
 exe 'Tsy match texMathParenCommand contained' "'".s:regexp."'"
 
