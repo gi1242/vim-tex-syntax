@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Sat 01 Aug 2015 12:12:35 PM EDT
+" Last Changed:	Sat 22 Aug 2015 04:55:54 PM EDT
 " Version:	0.2
 "
 " Description:
@@ -99,7 +99,8 @@ syn region texArgsNormNorm contained transparent
 	    \ nextgroup=texArgsNormNorm skipwhite skipempty
 	    \ contains=@TopSpell
 syn region texArgsNormNorm contained transparent
-	    \ matchgroup=texArgDelims start='{' end='}'
+	    \ matchgroup=texArgDelims start='{'
+	    \ end='\v%(\\end\{\a+\*?)@<!}'
 	    \ nextgroup=texArgsNormNorm skipwhite skipempty
 	    \ contains=@TopSpell
 
@@ -110,7 +111,8 @@ syn region texArgsSpclNormOpt contained
 	    \ nextgroup=@texArgsSpclNorm skipwhite skipempty
 	    \ contains=@TopNoSpell,texArgSep
 syn region texArgsSpclNormReq contained transparent
-	    \ matchgroup=texArgDelims start='{' end='}'
+	    \ matchgroup=texArgDelims start='{'
+	    \ end='\v%(\\end\{\a+\*?)@<!}'
 	    \ nextgroup=@texArgsSpclNorm skipwhite skipempty
 	    \ contains=@TopSpell
 syn match texArgSep contained '[,=]'
@@ -122,7 +124,8 @@ syn region texArgsSpclSpclOpt contained
 	    \ nextgroup=@texArgsSpclSpcl skipwhite skipempty
 	    \ contains=@TopNoSpell,texArgSep
 syn region texArgsSpclSpclReq contained
-	    \ matchgroup=texArgDelims start='{' end='}'
+	    \ matchgroup=texArgDelims start='{'
+	    \ end='\v%(\\end\{\a+\*?)@<!}'
 	    \ contains=@TopNoSpell,texArgSep
 	    \ nextgroup=@texArgsSpclSpcl skipwhite skipempty
 
@@ -132,7 +135,8 @@ syn region texArgsPreamble contained
 	    \ nextgroup=texArgsPreamble skipwhite skipempty
 	    \ contains=@texArgsPreambleAllowed
 syn region texArgsPreamble contained
-	    \ matchgroup=texArgDelims start='{' end='}'
+	    \ matchgroup=texArgDelims start='{'
+	    \ end='\v%(\\end\{\a+\*?)@<!}'
 	    \ nextgroup=texArgsPreamble skipwhite skipempty
 	    \ contains=@texArgsPreambleAllowed
 syn cluster texArgsPreambleAllowed
@@ -145,7 +149,8 @@ syn region texArgsMathGen contained transparent
 	    \ nextgroup=texArgsMathGen skipwhite skipempty
 	    \ contains=@texAllowedInMath,texDimen
 syn region texArgsMathGen contained transparent
-	    \ matchgroup=texArgDelims start='{' end='}'
+	    \ matchgroup=texArgDelims start='{'
+	    \ end='\v%(\\end\{\a+\*?)@<!}'
 	    \ nextgroup=texArgsMathGen skipwhite skipempty
 	    \ contains=@texAllowedInMath,texDimen
 
@@ -156,7 +161,8 @@ syn region texArgsMathTextOpt contained
 	    \ nextgroup=@texArgsMathText skipwhite skipempty
 	    \ contains=@TopNoSpell,texArgSep
 syn region texArgsMathTextReq contained
-	    \ matchgroup=texArgDelims start='{' end='}'
+	    \ matchgroup=texArgDelims start='{'
+	    \ end='\v%(\\end\{\a+\*?)@<!}'
 	    \ nextgroup=@texArgsMathText skipwhite skipempty
 	    \ contains=TOP
 
@@ -199,7 +205,8 @@ syn region texMathBrace contained transparent start='{' end='}'
 syn match texMathScripts contained '[_^]'
 	    \ nextgroup=texMathScriptArg skipwhite skipempty
 syn region texMathScriptArg contained transparent
-	    \ matchgroup=texMathScripts start='{' end='}'
+	    \ matchgroup=texMathScripts start='{'
+	    \ end='\v%(\\end\{\a+\*?)@<!}'
 	    \ contains=@texAllowedInMath
 
 " Generic math commands
@@ -238,13 +245,14 @@ Tsy region texEnv transparent
 
 " \zs, \ze don't seem to work for this.
 "Tsy match texEnvName '\v\\begin\{\zs\a+\*?\ze\}' nextgroup=texEnvCloseBrace
-Tsy match texEnvName '\v%(\\%(begin|end)\{)@<=\a+\*?\ze\}'
+Tsy match texEnvName '\v%(\\%(begin|end)\{)@<=\a+\*?\}@='
 	    \ nextgroup=texEnvCloseBrace
 syn match texEnvCloseBrace '}' contained
 
 Tsy region texArgsEnvReq
 	    \ matchgroup=texArgDelims
-	    \ start='\v%(\\begin\{\a+\*?\}\s*)@<=\{' end='}'
+	    \ start='\v%(\\begin\{\a+\*?\}\s*)@<=\{'
+	    \ end='\v%(\\end\{\a+\*?)@<!}'
 	    \ contains=@TopNoSpell,texArgSep
 	    \ nextgroup=@texArgsSpclSpcl skipwhite skipempty
 Tsy region texArgsEnvOpt
