@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Sat 22 Aug 2015 04:55:54 PM EDT
+" Last Changed:	Thu 03 Sep 2015 11:16:45 AM EDT
 " Version:	0.2
 "
 " Description:
@@ -134,14 +134,17 @@ syn region texArgsPreamble contained
 	    \ matchgroup=texArgDelims start='\[' end='\]'
 	    \ nextgroup=texArgsPreamble skipwhite skipempty
 	    \ contains=@texArgsPreambleAllowed
+" Allow unmatched environments in these arguments so that
+" \newcommand{\be}{\begin{equation}} etc. work. No \end funny-ness for end
+" pattern, here since unmatched environments are allowed.
 syn region texArgsPreamble contained
 	    \ matchgroup=texArgDelims start='{'
-	    \ end='\v%(\\end\{\a+\*?)@<!}'
+	    \ end='}'
 	    \ nextgroup=texArgsPreamble skipwhite skipempty
 	    \ contains=@texArgsPreambleAllowed
 syn cluster texArgsPreambleAllowed
 	    \ add=@texPreambleCommands,texBraceError,texTextBrace,texComment
-	    \ add=texMath,texSpecialChars,texDimen,texEnvDispMath,texTokens
+	    \ add=texMath,texSpecialChars,texDimen,texTokens,texEnvName
 
 " Generic arguments of math commands
 syn region texArgsMathGen contained transparent
