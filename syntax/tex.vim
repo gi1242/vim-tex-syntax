@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Tue 08 Mar 2016 12:13:09 PM GMT
+" Last Changed:	Tue 29 Mar 2016 10:11:58 PM EDT
 " Version:	0.2
 "
 " Description:
@@ -281,7 +281,7 @@ exe 'Tsy region texArgsEnvNormOpt transparent matchgroup=texArgDelims'
 	    \ 'nextgroup=@texArgsNormNorm skipwhite skipempty'
 
 " Math environments
-let s:math_env_names = 'align alignat displaymath eqnarray equation equs gather'
+let s:math_env_names = 'align alignat displaymath eqnarray equation equ equs gather'
 	    \ . ' IEEEeqnarray multline subequations xalignat xxalignat'
 	    \ . ( exists( 'g:tex_math_envs' ) ? ' '.g:tex_math_envs : '')
 let s:regexp = '\v\\begin\{\z(%('
@@ -393,8 +393,9 @@ Tsy region texSubsubsectionFold transparent fold keepend
 	    \ end='\v\n%(\s*\\begin\{%(thebibliography|bibdiv)\})@='
 
 " BibTeX bibliography.
+" \bibliography{..} doesn't start a fold since it's only one line.
 Tsy region texBibFold transparent fold keepend
-	    \ start='\v\\bibliography%(style)?'
+	    \ start='\v\\bibliographystyle'
 	    \ end='\v\n%(\s*\\end\{document\})@='
 	    \ end='\v\n%(\s*%(\\chapter|\%startchapter)>)@='
 	    \ end='%endchapter'
