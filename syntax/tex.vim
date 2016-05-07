@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Tue 29 Mar 2016 10:11:58 PM EDT
+" Last Changed:	Sat 07 May 2016 01:49:56 PM EDT
 " Version:	0.2
 "
 " Description:
@@ -53,7 +53,7 @@ syn match texPreambleGenCommand contained '\v\\[[:alpha:]@]+\*?'
 " Commands with special arguments.
 let s:cmdlist = 'usepackage RequirePackage ProvidesPackage documentclass'
 	    \ . ' input include subfile includegraphics setlength'
-	    \ . ' eqref cref ref cite cites pageref label'
+	    \ . ' eqref cref ref cite cites pageref label minilab'
 	    \ . ' bibliography bibliographystyle nocite'
 	    \ . ' url email subjclass texttt'
 	    \ . ( exists( 'g:tex_special_arg_commands' ) ?
@@ -330,9 +330,9 @@ Tsy region texVerb
 	    \ end='\v\\end\{\z1\}'
 
 " {{{1 TeX Comments
-Tsy match  texComment	'%.*$'
-Tsy match  texComment	'%\s.*$' contains=@Spell
-Tsy region texComment	 matchgroup=texComment fold
+Tsy match  texComment extend	'%.*$'
+Tsy match  texComment extend	'%\s.*$' contains=@Spell
+Tsy region texComment extend	 matchgroup=texComment fold
 	    \ start='\\iffalse\>' end='\\else\>' end='\\fi\>'
 	    \ contains=texComment,texNestedIf
 syn region texNestedIf contained transparent
