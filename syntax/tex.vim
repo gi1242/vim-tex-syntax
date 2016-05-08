@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Sat 07 May 2016 01:49:56 PM EDT
+" Last Changed:	Sun 08 May 2016 08:15:47 AM EDT
 " Version:	0.2
 "
 " Description:
@@ -341,6 +341,10 @@ syn region texNestedIf contained transparent
 
 " {{{1 Folding
 
+" Match comment end markers without extend
+Tsy match texComment '\v\%(end|start)((sub)*section|chapter)>'
+Tsy match texComment '\v\%endfrontmatter>'
+
 " Fold by sections / subsections
 "Tsy region texFrontmatterFold transparent fold keepend
 "	    \ start='\v\\frontmattter' end='\v\n%(\s*\\mainmatter)@='
@@ -405,6 +409,7 @@ Tsy region texBibFold transparent fold keepend
 syn region texBibitemFold fold containedin=texEnv
 	    \ start='\v^\s*\\bib\{.*$'
 	    \ end='\v^%(\s*\})'
+
 
 " Fold environments (theorems, etc.)
 let s:fold_envs = 'theorem lemma proposition corollary conjecture definition'
