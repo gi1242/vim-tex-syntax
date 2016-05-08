@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Sun 08 May 2016 08:15:47 AM EDT
+" Last Changed:	Sun 08 May 2016 03:41:33 PM EDT
 " Version:	0.2
 "
 " Description:
@@ -68,6 +68,12 @@ Tsy match texSpecialArgCommands
 	    \ nextgroup=texArgsNormNorm skipwhite skipempty
 	    \ '\v\\title>'
 
+" Generic commands with preamble like arguments (no spelling, environments,
+" etc.)
+Tsy match texGenericCommand
+	    \ nextgroup=texArgsPreamble skipwhite skipempty
+	    \ '\v\\bib>'
+
 " Special commands. (Highlighted differently; but arguments are normal)
 let s:cmdlist = 'tiny scriptsize footnotesize small normalsize large Large'
 	    \ . ' LARGE huge Huge'
@@ -116,6 +122,7 @@ syn region texArgsSpclNormReq contained transparent
 	    \ nextgroup=@texArgsSpclNorm skipwhite skipempty
 	    \ contains=@TopSpell
 syn match texArgSep contained '[,=]'
+
 
 " Optional and required arguments are special (colored, no spell).
 syn cluster texArgsSpclSpcl contains=texArgsSpclSpclOpt,texArgsSpclSpclReq
@@ -178,7 +185,9 @@ if b:is_sty
 	    \ contains=@texPreambleStuff
 else
     Tsy region texPreamble transparent fold
-	    \ start='\v%(\\documentclass)@=' end='\v(\\begin\{document\})@='
+	    \ start='\v%(\\documentclass)@='
+	    \ matchgroup=PreProc start='\v\%\&\s*\k+'
+	    \ matchgroup=NONE end='\v(\\begin\{document\})@='
 	    \ contains=@texPreambleStuff
 endif
 
@@ -330,10 +339,10 @@ Tsy region texVerb
 	    \ end='\v\\end\{\z1\}'
 
 " {{{1 TeX Comments
-Tsy match  texComment extend	'%.*$'
+Tsy match  texComment extend	'\v\%%([^&].*)?$'
 Tsy match  texComment extend	'%\s.*$' contains=@Spell
 Tsy region texComment extend	 matchgroup=texComment fold
-	    \ start='\\iffalse\>' end='\\else\>' end='\\fi\>'
+	    \ start='\\iffalse\>' end='\ze\\else\>' end='\\fi\>'
 	    \ contains=texComment,texNestedIf
 syn region texNestedIf contained transparent
 	    \ start='\v\\if%(f>)@!\w+>' skip='\\else\>' end='\\fi\>'
@@ -343,7 +352,7 @@ syn region texNestedIf contained transparent
 
 " Match comment end markers without extend
 Tsy match texComment '\v\%(end|start)((sub)*section|chapter)>'
-Tsy match texComment '\v\%endfrontmatter>'
+Tsy match texComment '\v\%(endfrontmatter>|.*\}{3}[0-9]@!)'
 
 " Fold by sections / subsections
 "Tsy region texFrontmatterFold transparent fold keepend
@@ -406,15 +415,15 @@ Tsy region texBibFold transparent fold keepend
 	    \ end='\v\n%(\s*%(\\%(sub)*section|\%start%(sub)*section)>)@='
 	    \ end='\v\%end%(sub)*section'
 
-syn region texBibitemFold fold containedin=texEnv
-	    \ start='\v^\s*\\bib\{.*$'
+syn region texBibitemFold transparent fold containedin=texEnv
+	    \ start='\v^\s*\\bib>'
 	    \ end='\v^%(\s*\})'
 
 
 " Fold environments (theorems, etc.)
 let s:fold_envs = 'theorem lemma proposition corollary conjecture definition'
 	    \ . ' remark example proof abstract figure'
-	    \ . ' thebibliography biblist bibdiv'
+	    \ . ' thebibliography biblist'
 	    \ . ( exists( 'g:tex_fold_envs' ) ? ' '.g:tex_fold_envs : '' )
 
 let s:regexp = '\v\\begin\{\z(%('
