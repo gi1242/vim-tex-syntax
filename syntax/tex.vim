@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Sun 08 May 2016 03:41:33 PM EDT
+" Last Changed:	Mon 23 May 2016 05:35:25 PM EDT
 " Version:	0.2
 "
 " Description:
@@ -351,8 +351,8 @@ syn region texNestedIf contained transparent
 " {{{1 Folding
 
 " Match comment end markers without extend
-Tsy match texComment '\v\%(end|start)((sub)*section|chapter)>'
-Tsy match texComment '\v\%(endfrontmatter>|.*\}{3}[0-9]@!)'
+Tsy match texComment '\v\%(end|start)((sub)*section|chapter)>.*'
+Tsy match texComment '\v\%(endfrontmatter>|.*\}{3}[0-9]@!).*'
 
 " Fold by sections / subsections
 "Tsy region texFrontmatterFold transparent fold keepend
