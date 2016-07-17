@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Mon 23 May 2016 05:35:25 PM EDT
+" Last Changed:	Mon 04 Jul 2016 08:35:37 AM EDT
 " Version:	0.2
 "
 " Description:
@@ -21,7 +21,7 @@ set cpo&vim
 " but _ is the only one that causes problems.
 " One may override this iskeyword setting by providing
 " g:tex_isk
-let &l:isk = exists( 'g:tex_isk' ) ? g:tex_isk : '@-@,48-57,a-z,A-Z,192-255'
+let &l:isk = exists( 'g:tex_isk' ) ? g:tex_isk : '@-@,48-57,:,a-z,A-Z,192-255'
 if !exists( 'b:is_sty' )
     let b:is_sty = exists( 'g:tex_is_sty' ) ? g:tex_is_sty :
 		\	( expand( '%:e' ) =~? '\v(sty|cls)' ? 1 : 0 )
