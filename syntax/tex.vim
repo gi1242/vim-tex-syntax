@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Mon 10 Oct 2016 11:48:08 AM EDT
+" Last Changed:	Sat 05 Nov 2016 03:59:34 PM EDT
 " Version:	0.2
 "
 " Description:
@@ -415,7 +415,7 @@ Tsy region texBibFold transparent fold keepend
 	    \ end='\v\n%(\s*%(\\%(sub)*section|\%start%(sub)*section)>)@='
 	    \ end='\v\%end%(sub)*section'
 
-syn region texBibitemFold transparent fold containedin=texEnv
+syn region texBibitemFold transparent fold containedin=texEnv keepend
 	    \ start='\v^\s*\\bib>'
 	    \ end='\v^%(\s*\})'
 
