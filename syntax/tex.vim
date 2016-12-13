@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Sat 05 Nov 2016 03:59:34 PM EDT
+" Last Changed:	Tue 13 Dec 2016 08:47:26 AM EST
 " Version:	0.2
 "
 " Description:
@@ -347,6 +347,9 @@ Tsy region texComment extend	 matchgroup=texComment fold
 syn region texNestedIf contained transparent
 	    \ start='\v\\if%(f>)@![a-zA-Z@]+>' skip='\\else\>' end='\\fi\>'
 	    \ contains=texNestedIf
+
+Tsy region texComment extend matchgroup=texComment fold
+	    \ start='\\begin{comment}' end='\\end{comment}'
 
 " {{{1 Folding
 
