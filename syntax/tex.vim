@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Tue 13 Dec 2016 08:47:26 AM EST
+" Last Changed:	Thu 04 May 2017 05:06:27 PM EDT
 " Version:	0.2
 "
 " Description:
@@ -291,7 +291,7 @@ exe 'Tsy region texArgsEnvNormOpt transparent matchgroup=texArgDelims'
 
 " Math environments
 let s:math_env_names = 'align alignat displaymath eqnarray equation equ equs gather'
-	    \ . ' IEEEeqnarray multline subequations xalignat xxalignat'
+	    \ . ' IEEEeqnarray multline xalignat xxalignat'
 	    \ . ( exists( 'g:tex_math_envs' ) ? ' '.g:tex_math_envs : '')
 let s:regexp = '\v\\begin\{\z(%('
 	    \ . substitute( s:math_env_names, '\v\s+', '|', 'g' )
