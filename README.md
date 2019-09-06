@@ -85,7 +85,7 @@ In case the automatically created syntax folds created are not sufficient for
 your purposes, you can adjust it manually in the following ways.
 
 1. The comment markers `%{{{` and `%}}}` can be used to create a fold.
-   The numbered versions `%{{{1` etc. are ignored.
+   The numbered versions `%{{{1`, `%}}}1` etc. are ignored.
 
 2. Section / subsection level folds can manually be started using
    `%startsection`, `%startsubsection` or `%startsubsubsection`. (Similarly
@@ -97,11 +97,13 @@ your purposes, you can adjust it manually in the following ways.
 
 4. The front matter fold (that starts on the line after `\begin{document}`)
    usually ends when a section or chapter is started. If you want to end it
-   earlier, use the comment `%endfrontmatter'
+   earlier, use the comment `%endfrontmatter`
 
 ## Links
 
 * [Github page](https://github.com/gi1242/vim-tex-syntax)
+
+* [Gitlab page](https://gitlab.com/gi1242/vim-tex-syntax)
 
 * [Vim script page](http://www.vim.org/scripts/script.php?script_id=5076)
 
