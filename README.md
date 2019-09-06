@@ -41,6 +41,11 @@ wanted checked (and erratically failed).
    `\end{...}` statement. Extra closed braces are flagged. Braces denoting
    command and script script arguments are highlighted differently.
 
+4. *Concealing Greek characters and Symbols.*
+   If you set `conceallevel` to `1` or `2` and are using UTF-8 encoding, then
+   commands like `\alpha` or `\nabla` will be shown as `α` or `∇`
+   respectively.
+
 ## Configuration options.
 
 `g:tex_special_arg_commands`

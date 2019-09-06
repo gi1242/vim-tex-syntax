@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Thu 04 May 2017 05:06:27 PM EDT
+" Last Changed:	Thu 05 Sep 2019 05:45:02 PM EDT
 " Version:	0.2
 "
 " Description:
@@ -55,7 +55,7 @@ let s:cmdlist = 'usepackage RequirePackage ProvidesPackage documentclass'
 	    \ . ' input include subfile includegraphics setlength'
 	    \ . ' eqref cref ref cite citen cites pageref label minilab'
 	    \ . ' bibliography bibliographystyle nocite'
-	    \ . ' url email subjclass texttt'
+	    \ . ' href url email subjclass texttt color setcounter'
 	    \ . ( exists( 'g:tex_special_arg_commands' ) ?
 		    \ g:tex_special_arg_commands : '' )
 let s:regexp = substitute( s:cmdlist, '\v\s+', '|', 'g' )
@@ -206,7 +206,7 @@ Tsy region texMath start='\\\[' end='\\\]' contains=@texAllowedInMath
 
 let s:cmdlist = 'texMathBrace,texSpecialChars,texMathCommand,texMathEnv,'
 	    \ . 'texMathScripts,texComment,texEnvName,texEnvError,'
-	    \ . 'texBraceError,texMathParen,texMathParenCommand'
+	    \ . 'texBraceError,texMathParen,texMathParenCommand,texSymbol'
 exe 'syn cluster texAllowedInMath contains=' . s:cmdlist
 exe 'syn cluster texMathNoBraceError add='.s:cmdlist 'remove=texBraceError'
 
@@ -246,6 +246,202 @@ syn region texMathParen transparent contained matchgroup=texEnvName
 	    \ start='\v\\left\s*%([.(|[]|\\[{|])'
 	    \ end='\v\\right\s*%([.)|\]]|\\[}|])'
 	    \ contains=@texAllowedInMath
+
+" Unicode sumbol replacement {{{2
+if has('conceal') && &encoding == 'utf-8'
+    let conceal = {
+	\ 'alpha':	'α',
+	\ 'beta':	'β',
+	\ 'gamma':	'γ',
+	\ 'delta':	'δ',
+	\ 'epsilon':	'ϵ',
+	\ 'varepsilon':	'ε',
+	\ 'zeta':	'ζ',
+	\ 'eta':	'η',
+	\ 'theta':	'θ',
+	\ 'vartheta':	'ϑ',
+	\ 'kappa':	'κ',
+	\ 'lambda':	'λ',
+	\ 'mu':		'μ',
+	\ 'nu':		'ν',
+	\ 'xi':		'ξ',
+	\ 'pi':		'π',
+	\ 'varpi':	'ϖ',
+	\ 'rho':	'ρ',
+	\ 'varrho':	'ϱ',
+	\ 'sigma':	'σ',
+	\ 'varsigma':	'ς',
+	\ 'tau':	'τ',
+	\ 'upsilon':	'υ',
+	\ 'phi':	'ϕ',
+	\ 'varphi':	'φ',
+	\ 'chi':	'χ',
+	\ 'psi':	'ψ',
+	\ 'omega':	'ω',
+	\ 'Gamma':	'Γ',
+	\ 'Delta':	'Δ',
+	\ 'Theta':	'Θ',
+	\ 'Lambda':	'Λ',
+	\ 'Xi':		'Χ',
+	\ 'Pi':		'Π',
+	\ 'Sigma':	'Σ',
+	\ 'Upsilon':	'Υ',
+	\ 'Phi':	'Φ',
+	\ 'Psi':	'Ψ',
+	\ 'Omega':	'Ω',
+    \ }
+
+    " Symbols
+    call extend( conceal, {
+	\ 'aleph':	'ℵ',
+	\ 'amalg':	'∐',
+	\ 'angle':	'∠',
+	\ 'approx':	'≈',
+	\ 'ast':	'∗',
+	\ 'asymp':	'≍',
+	\ 'bot':	'⊥',
+	\ 'bowtie':	'⋈',
+	\ 'bullet':	'•',
+	\ 'cap':	'∩',
+	\ 'cdot':	'·',
+	\ 'cdots':	'⋯',
+	\ 'circ':	'∘',
+	\ 'cong':	'≅',
+	\ 'copyright':	'©',
+	\ 'cup':	'∪',
+	\ 'dagger':	'†',
+	\ 'dashv':	'⊣',
+	\ 'ddagger':	'‡',
+	\ 'ddots':	'⋱',
+	\ 'diamond':	'⋄',
+	\ 'div':	'÷',
+	\ 'doteq':	'≐',
+	\ 'dots':	'…',
+	\ 'downarrow':	'↓',
+	\ 'Downarrow':	'⇓',
+	\ 'ell':	'ℓ',
+	\ 'emptyset':	'∅',
+	\ 'equiv':	'≡',
+	\ 'exists':	'∃',
+	\ 'flat':	'♭',
+	\ 'forall':	'∀',
+	\ 'frown':	'⁔',
+	\ 'ge':		'≥',
+	\ 'geq':	'≥',
+	\ 'gets':	'←',
+	\ 'gg':		'⟫',
+	\ 'hbar':	'ℏ',
+	\ 'hookleftarrow':	'↩',
+	\ 'hookrightarrow':	'↪',
+	\ 'iff':	'⇔',
+	\ 'Im':		'ℑ',
+	\ 'imath':	'ɩ',
+	\ 'in':		'∈',
+	\ 'infty':	'∞',
+	\ 'int':	'∫',
+	\ 'iint':	'∬',
+	\ 'iiint':	'∭',
+	\ 'jmath':	'𝚥',
+	\ 'land':	'∧',
+	\ 'lceil':	'⌈',
+	\ 'ldots':	'…',
+	\ 'le':		'≤',
+	\ 'leftarrow':	'←',
+	\ 'Leftarrow':	'⇐',
+	\ 'leftharpoondown':	'↽',
+	\ 'leftharpoonup':	'↼',
+	\ 'leftrightarrow':	'↔',
+	\ 'Leftrightarrow':	'⇔',
+	\ 'leq':	'≤',
+	\ 'lfloor':	'⌊',
+	\ 'lmoustache':	'╭',
+	\ 'lor':	'∨',
+	\ 'mapsto':	'↦',
+	\ 'mid':	'∣',
+	\ 'models':	'╞',
+	\ 'mp':		'∓',
+	\ 'nabla':	'∇',
+	\ 'natural':	'♮',
+	\ 'ne':		'≠',
+	\ 'nearrow':	'↗',
+	\ 'neg':	'¬',
+	\ 'neq':	'≠',
+	\ 'ni':		'∋',
+	\ 'notin':	'∉',
+	\ 'nwarrow':	'↖',
+	\ 'odot':	'⊙',
+	\ 'oint':	'∮',
+	\ 'oiint':	'∯',
+	\ 'ominus':	'⊖',
+	\ 'oplus':	'⊕',
+	\ 'oslash':	'⊘',
+	\ 'otimes':	'⊗',
+	\ 'owns':	'∋',
+	\ 'partial':	'∂',
+	\ 'perp':	'⊥',
+	\ 'pm':		'±',
+	\ 'prec':	'≺',
+	\ 'preceq':	'⪯',
+	\ 'prime':	'′',
+	\ 'prod':	'∏',
+	\ 'propto':	'∝',
+	\ 'rceil':	'⌉',
+	\ 'Re':		'ℜ',
+	\ 'rfloor':	'⌋',
+	\ 'rightarrow':	'→',
+	\ 'Rightarrow':	'⇒',
+	\ 'rightleftharpoons':	    '⇌',
+	\ 'rmoustache':	'╮',
+	\ 'S':		'§',
+	\ 'searrow':	'↘',
+	\ 'setminus':	'∖',
+	\ 'sharp':	'♯',
+	\ 'sim':	'∼',
+	\ 'simeq':	'⋍',
+	\ 'smile':	'‿',
+	\ 'sqcap':	'⊓',
+	\ 'sqcup':	'⊔',
+	\ 'sqsubset':	'⊏',
+	\ 'sqsubseteq':	'⊑',
+	\ 'sqsupset':	'⊐',
+	\ 'sqsupseteq':	'⊒',
+	\ 'star':	'✫',
+	\ 'subset':	'⊂',
+	\ 'subseteq':	'⊆',
+	\ 'succ':	'≻',
+	\ 'succeq':	'⪰',
+	\ 'sum':	'∑',
+	\ 'supset':	'⊃',
+	\ 'supseteq':	'⊇',
+	\ 'surd':	'√',
+	\ 'swarrow':	'↙',
+	\ 'times':	'×',
+	\ 'to':		'→',
+	\ 'top':	'⊤',
+	\ 'triangle':	'∆',
+	\ 'triangleleft':	'⊲',
+	\ 'triangleright':	'⊳',
+	\ 'uparrow':		'↑',
+	\ 'Uparrow':		'⇑',
+	\ 'updownarrow':	'↕',
+	\ 'Updownarrow':	'⇕',
+	\ 'vdash':	'⊢',
+	\ 'vdots':	'⋮',
+	\ 'vee':	'∨',
+	\ 'wedge':	'∧',
+	\ 'wp':		'℘',
+	\ 'wr':		'≀',
+    \ } )
+
+    for [pat, cchar] in items( conceal )
+	exe "syn match texSymbol '\\\\".pat."\\>'"
+	    \ "contained conceal cchar=".cchar
+    endfor
+
+    syn match texSymbol '\\|' contained conceal cchar=‖
+
+    unlet pat cchar conceal
+endif
 
 " Environments {{{1
 " Generic environments. Arguments are treated as texArgsSpclSpcl
@@ -492,6 +688,7 @@ hi def link texArgsMathTextReq	    Normal
 hi def link texStarMathText	    texMathCommand
 hi def link texMathScripts	    Constant
 hi def link texMathEnvGroup	    Identifier
+hi def link texSymbol		    Special
 
 hi def link texEnvName		    Identifier
 hi def link texEnvCloseBrace	    texCommand
