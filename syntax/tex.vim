@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Thu 05 Sep 2019 05:45:02 PM EDT
+" Last Changed:	Fri 20 Sep 2019 10:16:33 AM EDT
 " Version:	0.2
 "
 " Description:
@@ -54,8 +54,8 @@ syn match texPreambleGenCommand contained '\v\\[[:alpha:]@]+\*?'
 let s:cmdlist = 'usepackage RequirePackage ProvidesPackage documentclass'
 	    \ . ' input include subfile includegraphics setlength'
 	    \ . ' eqref cref ref cite citen cites pageref label minilab'
-	    \ . ' bibliography bibliographystyle nocite'
-	    \ . ' href url email subjclass texttt color setcounter'
+	    \ . ' bibitem bibliography bibliographystyle nocite'
+	    \ . ' href url doi email subjclass texttt color setcounter'
 	    \ . ( exists( 'g:tex_special_arg_commands' ) ?
 		    \ g:tex_special_arg_commands : '' )
 let s:regexp = substitute( s:cmdlist, '\v\s+', '|', 'g' )
