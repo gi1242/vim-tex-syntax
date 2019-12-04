@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Fri 20 Sep 2019 10:16:33 AM EDT
+" Last Changed:	Wed 04 Dec 2019 11:49:35 AM EST
 " Version:	0.2
 "
 " Description:
@@ -531,7 +531,7 @@ Tsy region texVerb matchgroup=texCommand
 	    \ start='\v\\verb\*?\z([^a-zA-Z@])' end='\z1'
 
 Tsy region texVerb
-	    \ start='\v\\begin\{\z(lstlistings|verbatim)}'
+	    \ start='\v\\begin\{\z(lstlisting|verbatim)}'
 	    \ end='\v\\end\{\z1\}'
 
 " {{{1 TeX Comments
