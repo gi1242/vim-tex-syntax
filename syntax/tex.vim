@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Wed 04 Dec 2019 11:49:35 AM EST
+" Last Changed:	Sat 03 Oct 2020 11:18:25 AM EDT
 " Version:	0.2
 "
 " Description:
@@ -57,10 +57,19 @@ let s:cmdlist = 'usepackage RequirePackage ProvidesPackage documentclass'
 	    \ . ' bibitem bibliography bibliographystyle nocite'
 	    \ . ' href url doi email subjclass texttt color setcounter'
 	    \ . ( exists( 'g:tex_special_arg_commands' ) ?
-		    \ g:tex_special_arg_commands : '' )
+		    \ ' '.g:tex_special_arg_commands : '' )
 let s:regexp = substitute( s:cmdlist, '\v\s+', '|', 'g' )
 exe 'Tsy match texSpecialArgCommands'
 	    \ 'nextgroup=@texArgsSpclSpcl skipwhite skipempty'
+	    \ '"\v\\%('.s:regexp.')>\*?"'
+
+" Commands with math arguments
+let s:cmdlist = 'ensuremath tcboxmath'
+	    \ . ( exists( 'g:tex_math_arg_commands' ) ?
+		    \ ' '.g:tex_math_arg_commands : '' )
+let s:regexp = substitute( s:cmdlist, '\v\s+', '|', 'g' )
+exe 'Tsy match texMathArgCommands'
+	    \ 'nextgroup=texArgsMath skipwhite skipempty'
 	    \ '"\v\\%('.s:regexp.')>\*?"'
 
 " Treat title specially (could be in preamble or document)
@@ -78,7 +87,8 @@ Tsy match texGenericCommand
 let s:cmdlist = 'tiny scriptsize footnotesize small normalsize large Large'
 	    \ . ' LARGE huge Huge'
 	    \ . ' text%(it|rm|md|up|sl) emph'
-	    \ . ( exists( 'g:tex_special_commands' ) ? g:tex_special_commands : '')
+	    \ . ( exists( 'g:tex_special_commands' ) ?
+		\ ' '.g:tex_special_commands : '')
 let s:regexp = substitute( s:cmdlist, '\v\s+', '|', 'g' )
 exe 'Tsy match texSpecialCommands'
 	    \ 'nextgroup=texArgsNormNorm skipwhite skipempty'
@@ -86,7 +96,8 @@ exe 'Tsy match texSpecialCommands'
 
 " Section commands
 let s:cmdlist = 'part chapter section subsection subsubsection paragraph subparagraph'
-	    \ . ( exists( 'g:tex_section_commands' ) ? g:tex_section_commands : '')
+	    \ . ( exists( 'g:tex_section_commands' ) ?
+		\ ' '.g:tex_section_commands : '')
 let s:regexp = substitute( s:cmdlist, '\v\s+', '|', 'g' )
 exe 'Tsy match texSectionCommands'
 	    \ 'nextgroup=texArgsNormNorm skipwhite skipempty'
@@ -152,6 +163,13 @@ syn region texArgsPreamble contained
 syn cluster texArgsPreambleAllowed
 	    \ add=@texPreambleCommands,texBraceError,texTextBrace,texComment
 	    \ add=texMath,texSpecialChars,texDimen,texTokens,texEnvName
+
+" Arguments of commands in math mode.
+syn region texArgsMath contained
+	    \ matchgroup=texArgDelims start='{'
+	    \ end='\v%(\\end\{\a+\*?)@<!}'
+	    \ skipwhite skipempty
+	    \ contains=@texAllowedInMath,texDimen,@TopNoSpell
 
 " Generic arguments of math commands
 syn region texArgsMathGen contained transparent
@@ -229,7 +247,7 @@ syn match texMathCommand contained '\v\\[[:alpha:]@]+\*?'
 let s:cmdlist = 'makebox mbox framebox fbox raisebox parbox'
 	    \ . ' text%(rm|tt|md|up|sl|bf|it)? operatorname'
 	    \ . ( exists( 'g:tex_math_text_commands' ) ?
-		    \ g:tex_math_text_commands : '' )
+		    \ ' '.g:tex_math_text_commands : '' )
 let s:regexp = substitute( s:cmdlist, '\v\s+', '|', 'g' )
 exe 'syn match texMathCommand contained'
 	    \ 'nextgroup=@texArgsMathText skipwhite skipempty'
@@ -664,6 +682,7 @@ hi def link texComment		    Comment
 hi def link texSectionCommands	    PreProc
 hi def link texSpecialCommands	    Special
 hi def link texSpecialArgCommands   texCommand
+hi def link texMathArgCommands	    texCommand
 hi def link texGenericCommand	    texCommand
 
 hi def link texPreambleCommand	    texCommand
@@ -679,6 +698,7 @@ hi def link texArgDelims	    texCommand
 hi def link texArgsSpclSpclOpt	    Constant
 hi def link texArgsSpclSpclReq	    Special
 hi def link texArgsSpclNormOpt	    texArgsSpclSpclOpt
+hi def link texArgsMath		    texMath
 
 hi def link texMathCommand	    texCommand
 hi def link texMathParen	    Identifier
