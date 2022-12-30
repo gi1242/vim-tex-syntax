@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Sat 03 Oct 2020 11:18:25 AM EDT
+" Last Changed:	Wed 28 Dec 2022 07:50:50 PM EST
 " Version:	0.2
 "
 " Description:
@@ -465,25 +465,25 @@ endif
 " Generic environments. Arguments are treated as texArgsSpclSpcl
 Tsy region texEnv transparent
 	    \ matchgroup=texCommand
-	    \ start='\v\\begin\{%(\z(\a+\*?)\})@='
+	    \ start='\v\\begin\{%(\z([[:alpha:]*@]+)\})@='
 	    \ end='\v\\end\{%(\z1\})@='
 	    \ contains=@TopSpell
 
 " \zs, \ze don't seem to work for this.
 "Tsy match texEnvName '\v\\begin\{\zs\a+\*?\ze\}' nextgroup=texEnvCloseBrace
-Tsy match texEnvName '\v%(\\%(begin|end)\{)@<=\a+\*?\}@='
+Tsy match texEnvName '\v%(\\%(begin|end)\{)@<=[[:alpha:]*@]+\}@='
 	    \ nextgroup=texEnvCloseBrace
 syn match texEnvCloseBrace '}' contained
 
 Tsy region texArgsEnvReq
 	    \ matchgroup=texArgDelims
-	    \ start='\v%(\\begin\{\a+\*?\}\s*)@<=\{'
-	    \ end='\v%(\\end\{\a+\*?)@<!}'
+	    \ start='\v%(\\begin\{[[:alpha:]*@]+\}\s*)@<=\{'
+	    \ end='\v%(\\end\{[[:alpha:]*@]+)@<!}'
 	    \ contains=@TopNoSpell,texArgSep
 	    \ nextgroup=@texArgsSpclSpcl skipwhite skipempty
 Tsy region texArgsEnvOpt
 	    \ matchgroup=texArgDelims
-	    \ start='\v%(\\begin\{\a+\*?\})@<=\[' end=']'
+	    \ start='\v%(\\begin\{[[:alpha:]*@]+\})@<=\[' end=']'
 	    \ contains=@TopNoSpell,texArgSep
 	    \ nextgroup=@texArgsSpclSpcl skipwhite skipempty
 
