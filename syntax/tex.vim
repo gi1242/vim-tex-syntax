@@ -1,7 +1,7 @@
 " Vim simple TeX syntax file
 " Maintainer:	GI <gi1242+vim@nospam.com> (replace nospam with gmail)
 " Created:	Tue 16 Dec 2014 03:45:10 PM IST
-" Last Changed:	Wed 28 Dec 2022 07:50:50 PM EST
+" Last Changed:	Wed 11 Jan 2023 11:49:59 AM EST
 " Version:	0.2
 "
 " Description:
@@ -443,6 +443,7 @@ if has('conceal') && &encoding == 'utf-8'
 	\ 'Uparrow':		'⇑',
 	\ 'updownarrow':	'↕',
 	\ 'Updownarrow':	'⇕',
+	\ 'varnothing':	'∅',
 	\ 'vdash':	'⊢',
 	\ 'vdots':	'⋮',
 	\ 'vee':	'∨',
